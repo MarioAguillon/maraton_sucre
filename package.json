@@ -1,0 +1,15 @@
+{
+  "name": "maraton-bolivar-sucre",
+  "version": "1.0.0",
+  "description": "Plataforma oficial ¼ Maratón Bolívar - Sucre (Landing Page + API + Supabase)",
+  "scripts": {
+    "frontend": "npm --prefix frontend start",
+    "backend": "npm --prefix backend start",
+    "backend:dev": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build"
+  },
+  "keywords": ["maraton", "atletismo", "angular", "express", "supabase"],
+  "author": "Davis Aguilar",
+  "license": "ISC"
+}
+
