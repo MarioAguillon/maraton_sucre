@@ -1,0 +1,114 @@
+@use 'variables' as *;
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+}
+
+@mixin container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+@mixin section-title {
+  font-family: $font-heading;
+  font-size: 2.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  color: $white;
+  margin-bottom: 12px;
+
+  @include respond-to(md) {
+    font-size: 2rem;
+  }
+}
+
+@mixin section-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $red-cta;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 8px;
+  display: block;
+}
+
+@mixin mms-card {
+  background: $purple-card;
+  border: 1px solid $purple-card-border;
+  border-radius: 28px;
+  padding: 36px 30px;
+  box-shadow: $shadow-card;
+  transition: transform $transition-normal, box-shadow $transition-normal, border-color $transition-normal;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.2);
+    border-color: rgba($purple-accent, 0.6);
+  }
+}
+
+@mixin glass-card {
+  @include mms-card;
+}
+
+@mixin cta-button($color: $blue-accent) {
+  @include mms-button;
+  background: $color;
+  box-shadow: 0 8px 25px rgba($color, 0.4);
+
+  &:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 12px 35px rgba($color, 0.6);
+  }
+}
+
+@mixin mms-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 28px;
+  background: $red-cta;
+  color: $white;
+  font-family: $font-heading;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: $shadow-glow-cta;
+  transition: all $transition-fast;
+  text-decoration: none;
+
+  &:hover {
+    background: $red-cta-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(255, 11, 83, 0.6);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}

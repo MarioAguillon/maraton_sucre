@@ -1,0 +1,31 @@
+<section class="sponsors" id="patrocinadores">
+  <div class="sponsors__container">
+    <h2 class="sponsors__title">PATROCINADORES & ALIADOS</h2>
+    <p class="sponsors__subtitle">Gracias a quienes hacen posible este evento</p>
+
+    @for (tier of sponsorTiers; track tier.name) {
+      <div class="sponsors__tier">
+        <h3 class="sponsors__tier-name" [class]="'sponsors__tier-name--' + tier.tier">
+          {{ tier.name }}
+        </h3>
+        <div class="sponsors__grid" [class]="'sponsors__grid--' + tier.tier">
+          @for (sponsor of tier.sponsors; track sponsor.name) {
+            <a [href]="sponsor.url" class="sponsors__logo-link" target="_blank" rel="noopener noreferrer" [attr.aria-label]="sponsor.name">
+              <div class="sponsors__logo-card" [class]="'sponsors__logo-card--' + tier.tier">
+                <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo-img" loading="lazy">
+                <span class="sponsors__logo-name">{{ sponsor.name }}</span>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="sponsors__cta">
+      <p class="sponsors__cta-text">¿Quieres ser patrocinador?</p>
+      <a href="mailto:contacto@maratonbolivarsucre.com" class="sponsors__cta-button">
+        CONTÁCTANOS
+      </a>
+    </div>
+  </div>
+</section>

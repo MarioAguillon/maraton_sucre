@@ -1,0 +1,251 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 18px 0;
+  transition: all $transition-normal;
+  background: linear-gradient(180deg, rgba($purple-dark, 0.9) 0%, rgba($purple-dark, 0) 100%);
+
+  &--scrolled {
+    padding: 12px 0;
+    background: rgba($purple-dark, 0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  &__container {
+    @include container;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  // Brand / Logo
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+  }
+
+  &__logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+    transition: transform $transition-fast;
+
+    .header--scrolled & {
+      height: 42px;
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &__brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__brand-title {
+    font-family: $font-heading;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: $white;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+
+  &__brand-sub {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $blue-accent;
+    letter-spacing: 2.5px;
+  }
+
+  // Desktop Navigation
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+
+    @include respond-to(lg) {
+      display: none;
+    }
+  }
+
+  &__nav-link {
+    font-family: $font-heading;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $white-dim;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    position: relative;
+    padding: 6px 0;
+    transition: color $transition-fast;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: $red-cta;
+      transition: width $transition-fast;
+    }
+
+    &:hover {
+      color: $white;
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+
+  // Actions
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    background: $red-cta;
+    color: $white;
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: $shadow-glow-cta;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $red-cta-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 11, 83, 0.6);
+    }
+
+    @include respond-to(sm) {
+      display: none;
+    }
+  }
+
+  // Mobile Hamburger
+  &__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 32px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 101;
+
+    span {
+      width: 100%;
+      height: 3px;
+      background: $white;
+      border-radius: 4px;
+      transition: all $transition-fast;
+    }
+
+    &--open {
+      span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+      span:nth-child(2) {
+        opacity: 0;
+      }
+      span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+    }
+
+    @include respond-to(lg) {
+      display: flex;
+    }
+  }
+
+  // Mobile Menu Dropdown
+  &__mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba($purple-dark, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 24px 0 32px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    animation: fadeInDown 0.3s ease;
+
+    @include respond-to(lg) {
+      display: block;
+    }
+  }
+
+  &__mobile-nav {
+    @include container;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  &__mobile-link {
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $white;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:hover {
+      color: $blue-accent;
+    }
+  }
+
+  &__mobile-cta {
+    @include mms-button;
+    margin-top: 10px;
+    padding: 14px;
+    font-size: 0.95rem;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

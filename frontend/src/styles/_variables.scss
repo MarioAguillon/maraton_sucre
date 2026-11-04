@@ -1,0 +1,48 @@
+// ─── Paleta Inspirada en Grandes Maratones (Estilo MMS) ──────────
+$purple-dark: #16042E;       // Fondo general ultra profundo
+$purple-card: #2B0A52;       // Fondo de cartas Sogamoso-style
+$purple-card-border: #4A178A; // Bordes sutiles
+$purple-glow: rgba(142, 45, 226, 0.35);
+
+// Acentos de Acción y Energía
+$red-cta: #FF0B53;           // Botón rojo/fucsia de alta conversión de MMS
+$red-cta-hover: #E00043;
+$red-cta-shadow: rgba(255, 11, 83, 0.45);
+$red-accent: #FF0B53;
+
+$blue-accent: #00D2FF;       // Azul cyan eléctrico
+$green-accent: #00E676;      // Verde meta neón
+$purple-accent: #A855F7;     // Morado claro
+$purple-light: #6B21A8;      // Morado intermedio
+
+// Colores de Texto y Fondo
+$white: #FFFFFF;
+$white-dim: #E2E8F0;
+$gray-subtle: #A39BB5;
+$dark-overlay: rgba(15, 3, 31, 0.85);
+
+// ─── Tipografía ────────────────────────────────────────────
+$font-primary: 'Inter', -apple-system, sans-serif;
+$font-heading: 'Montserrat', sans-serif;
+$font-condensed: 'Impact', 'Montserrat', sans-serif;
+
+// ─── Espaciado ─────────────────────────────────────────────
+$section-padding: 90px 0;
+$container-max: 1240px;
+
+// ─── Breakpoints ───────────────────────────────────────────
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1240px;
+
+// ─── Transiciones ──────────────────────────────────────────
+$transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ─── Sombras ───────────────────────────────────────────────
+$shadow-card: 0 12px 35px rgba(0, 0, 0, 0.45);
+$shadow-glow-cta: 0 8px 30px $red-cta-shadow;
+$shadow-glow-red: 0 0 20px rgba(255, 11, 83, 0.4);
+$shadow-glow-blue: 0 0 20px rgba(0, 210, 255, 0.4);
+$shadow-glow-green: 0 0 20px rgba(0, 230, 118, 0.4);

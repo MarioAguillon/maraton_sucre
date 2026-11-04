@@ -1,0 +1,223 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.circuits {
+  padding: $section-padding;
+  background: linear-gradient(180deg, $purple-dark 0%, #1A0538 50%, $purple-dark 100%);
+  position: relative;
+
+  &__container {
+    @include container;
+  }
+
+  &__tagline {
+    @include section-subtitle;
+  }
+
+  &__heading {
+    @include section-title;
+    margin-bottom: 50px;
+  }
+
+  // Grid
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-bottom: 60px;
+
+    @include respond-to(lg) {
+      grid-template-columns: 1fr;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  &__card {
+    @include mms-card;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  // Header: 10.5K + Tag pill
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__number {
+    font-family: $font-condensed;
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 0.9;
+    color: $white;
+    letter-spacing: 1px;
+
+    @include respond-to(md) {
+      font-size: 3.8rem;
+    }
+  }
+
+  &__pill {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: $white-dim;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    font-family: $font-heading;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: $white;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  &__desc {
+    color: $gray-subtle;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    min-height: 65px;
+
+    @include respond-to(md) {
+      min-height: auto;
+    }
+  }
+
+  // Map Box Graphic
+  &__map-box {
+    background: rgba(22, 4, 46, 0.95);
+    border: 1px solid rgba($purple-accent, 0.25);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  &__map-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
+
+  // Stats 3-column row (like MMS)
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 28px;
+
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 16px;
+    }
+  }
+
+  &__stat-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    &:not(:last-child) {
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+
+      @include respond-to(sm) {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-bottom: 12px;
+      }
+    }
+  }
+
+  &__stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: $gray-subtle;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  &__stat-val {
+    font-family: $font-heading;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: $white;
+  }
+
+  // CTA Button
+  &__cta {
+    @include mms-button;
+  }
+
+  // Media Wrapper (Video & Map)
+  &__media-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-top: 20px;
+
+    @include respond-to(lg) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__media-card {
+    @include mms-card;
+    padding: 28px;
+  }
+
+  &__media-title {
+    font-family: $font-heading;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: $white;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  &__media-sub {
+    font-size: 0.85rem;
+    color: $gray-subtle;
+    margin-bottom: 20px;
+  }
+
+  &__video-container {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  &__video {
+    width: 100%;
+    display: block;
+    max-height: 340px;
+    object-fit: cover;
+  }
+
+  &__map-container {
+    border-radius: 16px;
+    overflow: hidden;
+
+    iframe {
+      display: block;
+    }
+  }
+}

@@ -1,0 +1,143 @@
+<section class="distances" id="categorias">
+  <div class="distances__container">
+    <span class="distances__tagline">DISTANCIAS</span>
+    <h2 class="distances__heading">ELIGE CÓMO VIVIRLA</h2>
+
+    <!-- Cards Grid -->
+    <div class="distances__grid">
+      @for (item of distances; track item.distance) {
+        <div class="distances__card" [class.distances__card--free]="item.isFree">
+          <!-- Top Row: Distance + Tag -->
+          <div class="distances__card-header">
+            <div class="distances__info">
+              <span class="distances__pill">{{ item.tag }}</span>
+              <div class="distances__number">{{ item.distance }}</div>
+              <div class="distances__title">{{ item.title }}</div>
+              <div class="distances__price" [class.distances__price--free]="item.isFree">
+                {{ item.price }}
+              </div>
+              <div class="distances__note">{{ item.priceNote }}</div>
+            </div>
+
+            <!-- Athlete Visual Graphic -->
+            <div class="distances__visual">
+              <img [src]="item.athleteImg" [alt]="'Atleta ' + item.distance" class="distances__athlete-img" loading="lazy">
+            </div>
+          </div>
+
+          <!-- Feature items -->
+          <div class="distances__features">
+            @for (feat of item.features; track feat) {
+              <div class="distances__feature-item">
+                <span class="distances__feature-check">✓</span>
+                <span class="distances__feature-text">{{ feat }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Action Button (Sogamoso-style) -->
+          <button
+            type="button"
+            class="distances__cta"
+            (click)="selectDistance(item.categoryCode)"
+          >
+            INSCRIBIRME EN {{ item.distance }}
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Podium Prize Breakdown -->
+    <div class="distances__podium-box">
+      <div class="distances__podium-header">
+        <span class="distances__podium-trophy">🏆</span>
+        <div>
+          <h3 class="distances__podium-title">PREMIACIÓN EN EFECTIVO — ¼ MARATÓN (10.5K)</h3>
+          <p class="distances__podium-subtitle">Bolsa total de $3.200.000 COP repartida en Masculino y Femenino</p>
+        </div>
+      </div>
+
+      <div class="distances__podium-grid">
+        <!-- Elite 18+ -->
+        <div class="distances__podium-card">
+          <div class="distances__podium-badge">⚡ ELITE 18+ (Masc. & Fem.)</div>
+          <div class="distances__podium-places">
+            <div class="distances__podium-place">
+              <span class="pos">🥇 1° Lugar</span>
+              <span class="val">$250.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥈 2° Lugar</span>
+              <span class="val">$150.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥉 3° Lugar</span>
+              <span class="val">$100.000</span>
+            </div>
+          </div>
+          <div class="distances__podium-total">Total por rama: $500.000</div>
+        </div>
+
+        <!-- Elite 45+ -->
+        <div class="distances__podium-card">
+          <div class="distances__podium-badge">⚡ ELITE 45+ (Masc. & Fem.)</div>
+          <div class="distances__podium-places">
+            <div class="distances__podium-place">
+              <span class="pos">🥇 1° Lugar</span>
+              <span class="val">$250.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥈 2° Lugar</span>
+              <span class="val">$150.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥉 3° Lugar</span>
+              <span class="val">$100.000</span>
+            </div>
+          </div>
+          <div class="distances__podium-total">Total por rama: $500.000</div>
+        </div>
+
+        <!-- Recreativa 18+ -->
+        <div class="distances__podium-card">
+          <div class="distances__podium-badge distances__podium-badge--rec">🌟 RECREATIVA 18+</div>
+          <div class="distances__podium-places">
+            <div class="distances__podium-place">
+              <span class="pos">🥇 1° Lugar</span>
+              <span class="val">$125.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥈 2° Lugar</span>
+              <span class="val">$100.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥉 3° Lugar</span>
+              <span class="val">$75.000</span>
+            </div>
+          </div>
+          <div class="distances__podium-total">Total por rama: $300.000</div>
+        </div>
+
+        <!-- Recreativa 45+ -->
+        <div class="distances__podium-card">
+          <div class="distances__podium-badge distances__podium-badge--rec">🌟 RECREATIVA 45+</div>
+          <div class="distances__podium-places">
+            <div class="distances__podium-place">
+              <span class="pos">🥇 1° Lugar</span>
+              <span class="val">$125.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥈 2° Lugar</span>
+              <span class="val">$100.000</span>
+            </div>
+            <div class="distances__podium-place">
+              <span class="pos">🥉 3° Lugar</span>
+              <span class="val">$75.000</span>
+            </div>
+          </div>
+          <div class="distances__podium-total">Total por rama: $300.000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

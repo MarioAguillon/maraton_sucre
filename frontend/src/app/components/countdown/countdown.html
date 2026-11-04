@@ -1,0 +1,30 @@
+<section class="countdown" id="countdown">
+  <div class="countdown__container">
+    <h2 class="countdown__label">FALTAN</h2>
+    <div class="countdown__timer">
+      <div class="countdown__block">
+        <div class="countdown__number countdown__number--days">{{ timeLeft().days }}</div>
+        <div class="countdown__unit">Días</div>
+      </div>
+      <div class="countdown__separator">:</div>
+      <div class="countdown__block">
+        <div class="countdown__number countdown__number--hours">{{ padZero(timeLeft().hours) }}</div>
+        <div class="countdown__unit">Horas</div>
+      </div>
+      <div class="countdown__separator">:</div>
+      <div class="countdown__block">
+        <div class="countdown__number countdown__number--minutes">{{ padZero(timeLeft().minutes) }}</div>
+        <div class="countdown__unit">Minutos</div>
+      </div>
+      <div class="countdown__separator">:</div>
+      <div class="countdown__block">
+        <div class="countdown__number countdown__number--seconds">{{ padZero(timeLeft().seconds) }}</div>
+        <div class="countdown__unit">Segundos</div>
+      </div>
+    </div>
+    <div class="countdown__event-info">
+      <span class="countdown__date-icon">📅</span>
+      <span>Enero 9, 2027 · 6:45 AM · Bolívar, Santander</span>
+    </div>
+  </div>
+</section>

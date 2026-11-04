@@ -1,0 +1,130 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.countdown {
+  padding: 60px 0;
+  background: linear-gradient(135deg, rgba($purple-card, 0.9), rgba($purple-dark, 0.95));
+  border-top: 1px solid rgba($blue-accent, 0.15);
+  border-bottom: 1px solid rgba($blue-accent, 0.15);
+
+  &__container {
+    @include container;
+    text-align: center;
+  }
+
+  &__label {
+    font-family: $font-heading;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $gray-subtle;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  &__timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+
+    @include respond-to(sm) {
+      gap: 8px;
+    }
+  }
+
+  &__block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__number {
+    font-family: $font-heading;
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1;
+    min-width: 110px;
+    padding: 16px;
+    background: rgba($white, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba($white, 0.1);
+
+    &--days {
+      color: $red-accent;
+      text-shadow: $shadow-glow-red;
+    }
+    &--hours {
+      color: $blue-accent;
+      text-shadow: $shadow-glow-blue;
+    }
+    &--minutes {
+      color: $green-accent;
+      text-shadow: $shadow-glow-green;
+    }
+    &--seconds {
+      color: $white;
+    }
+
+    @include respond-to(md) {
+      font-size: 2.8rem;
+      min-width: 70px;
+      padding: 12px;
+    }
+
+    @include respond-to(sm) {
+      font-size: 2rem;
+      min-width: 55px;
+      padding: 8px;
+      border-radius: 10px;
+    }
+  }
+
+  &__separator {
+    font-family: $font-heading;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba($white, 0.3);
+    margin-top: -20px;
+
+    @include respond-to(md) {
+      font-size: 2rem;
+    }
+  }
+
+  &__unit {
+    font-family: $font-primary;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: $gray-subtle;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    @include respond-to(sm) {
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+    }
+  }
+
+  &__event-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: rgba($white, 0.05);
+    border-radius: 50px;
+    color: rgba($white, 0.7);
+    font-size: 0.95rem;
+
+    @include respond-to(sm) {
+      font-size: 0.8rem;
+      padding: 10px 16px;
+    }
+  }
+
+  &__date-icon {
+    font-size: 1.2rem;
+  }
+}

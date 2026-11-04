@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow6k" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E676" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#00D2FF" stop-opacity="0.0" />
+    </linearGradient>
+    <linearGradient id="bodyGrad6k" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E676" />
+      <stop offset="50%" stop-color="#00D2FF" />
+      <stop offset="100%" stop-color="#A855F7" />
+    </linearGradient>
+    <filter id="glow6k">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Aura Glow -->
+  <circle cx="200" cy="240" r="150" fill="url(#bgGlow6k)" filter="url(#glow6k)"/>
+
+  <!-- Speed Lines -->
+  <path d="M 50 290 L 170 290 M 30 320 L 150 320 M 70 260 L 190 260" stroke="#00E676" stroke-opacity="0.6" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Athlete Figure (Energetic Recreative Runner) -->
+  <g filter="url(#glow6k)" transform="translate(45, 20)">
+    <!-- Head with runner visor -->
+    <circle cx="195" cy="80" r="22" fill="#FFFFFF"/>
+    <path d="M 180 75 L 215 75 L 225 70 L 185 68 Z" fill="#00E676"/>
+    
+    <!-- Torso -->
+    <path d="M 185 102 L 215 105 L 195 225 L 165 218 Z" fill="url(#bodyGrad6k)"/>
+    
+    <!-- Race Number Bib -->
+    <rect x="175" y="135" width="36" height="42" rx="4" fill="#FFFFFF"/>
+    <text x="193" y="158" font-family="'Impact', Arial" font-size="18" fill="#16042E" text-anchor="middle">6K</text>
+    <text x="193" y="171" font-family="'Arial'" font-weight="bold" font-size="7" fill="#00E676" text-anchor="middle">LA PEÑA</text>
+
+    <!-- Arms (Celebrating / energetic sprint) -->
+    <path d="M 205 110 L 255 130 L 285 105" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 175 115 L 130 140 L 95 125" fill="none" stroke="#00D2FF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Left Leg (Striding) -->
+    <path d="M 185 220 L 235 285 L 255 365" fill="none" stroke="url(#bodyGrad6k)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Shoe -->
+    <path d="M 250 365 L 290 375 L 285 390 L 240 380 Z" fill="#FF0B53"/>
+
+    <!-- Right Leg -->
+    <path d="M 170 215 L 135 275 L 90 315" fill="none" stroke="#2563EB" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Shoe -->
+    <path d="M 90 315 L 65 340 L 55 330 L 80 305 Z" fill="#00E676"/>
+  </g>
+
+  <!-- Ground energy line -->
+  <line x1="40" y1="410" x2="360" y2="410" stroke="rgba(255, 255, 255, 0.15)" stroke-width="2"/>
+  <circle cx="265" cy="410" r="4" fill="#00E676"/>
+</svg>
+

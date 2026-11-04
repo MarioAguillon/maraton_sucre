@@ -1,0 +1,265 @@
+<section class="registration" id="inscripcion">
+  <div class="registration__container">
+    <h2 class="registration__title">INSCRIPCIÓN</h2>
+    <p class="registration__subtitle">
+      Completa el formulario y asegura tu cupo en la ¼ Maratón Bolívar - Sucre
+    </p>
+
+    <!-- Success State -->
+    @if (submitSuccess) {
+      <div class="registration__success">
+        <div class="registration__success-icon">✅</div>
+        <h3 class="registration__success-title">¡Inscripción Exitosa!</h3>
+        <p class="registration__success-message">
+          Tu código de inscripción es:
+        </p>
+        <div class="registration__success-code">{{ registrationCode }}</div>
+        <p class="registration__success-note">
+          Guarda este código. Lo necesitarás para reclamar tu kit el día del evento.
+        </p>
+        <button class="registration__success-btn" (click)="resetForm()">
+          Nueva Inscripción
+        </button>
+      </div>
+    } @else {
+      <!-- Registration Form -->
+      <form
+        class="registration__form"
+        [formGroup]="registrationForm"
+        (ngSubmit)="onSubmit()"
+        novalidate
+      >
+        <!-- Honeypot (campo trampa para bots — oculto) -->
+        <div class="registration__honeypot" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" formControlName="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="registration__form-grid">
+          <!-- Nombre -->
+          <div class="registration__field">
+            <label class="registration__label" for="nombre">
+              Nombre <span class="registration__required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nombre"
+              class="registration__input"
+              formControlName="nombre"
+              placeholder="Tu nombre"
+              [class.registration__input--error]="hasError('nombre')"
+              autocomplete="given-name"
+            >
+            @if (hasError('nombre')) {
+              <span class="registration__error">{{ getErrorMessage('nombre') }}</span>
+            }
+          </div>
+
+          <!-- Apellidos -->
+          <div class="registration__field">
+            <label class="registration__label" for="apellidos">
+              Apellidos <span class="registration__required">*</span>
+            </label>
+            <input
+              type="text"
+              id="apellidos"
+              class="registration__input"
+              formControlName="apellidos"
+              placeholder="Tus apellidos"
+              [class.registration__input--error]="hasError('apellidos')"
+              autocomplete="family-name"
+            >
+            @if (hasError('apellidos')) {
+              <span class="registration__error">{{ getErrorMessage('apellidos') }}</span>
+            }
+          </div>
+
+          <!-- Fecha de Nacimiento -->
+          <div class="registration__field">
+            <label class="registration__label" for="fecha_nacimiento">
+              Fecha de Nacimiento <span class="registration__required">*</span>
+            </label>
+            <input
+              type="date"
+              id="fecha_nacimiento"
+              class="registration__input"
+              formControlName="fecha_nacimiento"
+              [class.registration__input--error]="hasError('fecha_nacimiento')"
+              autocomplete="bday"
+            >
+            @if (hasError('fecha_nacimiento')) {
+              <span class="registration__error">{{ getErrorMessage('fecha_nacimiento') }}</span>
+            }
+            @if (calculatedAge !== null && !hasError('fecha_nacimiento')) {
+              <span class="registration__hint">
+                Tendrás {{ calculatedAge }} años al día del evento
+              </span>
+            }
+          </div>
+
+          <!-- Correo Electrónico -->
+          <div class="registration__field">
+            <label class="registration__label" for="correo">
+              Correo Electrónico <span class="registration__required">*</span>
+            </label>
+            <input
+              type="email"
+              id="correo"
+              class="registration__input"
+              formControlName="correo"
+              placeholder="correo@ejemplo.com"
+              [class.registration__input--error]="hasError('correo')"
+              autocomplete="email"
+            >
+            @if (hasError('correo')) {
+              <span class="registration__error">{{ getErrorMessage('correo') }}</span>
+            }
+          </div>
+
+          <!-- Celular -->
+          <div class="registration__field">
+            <label class="registration__label" for="celular">
+              Celular <span class="registration__required">*</span>
+            </label>
+            <div class="registration__phone-wrapper">
+              <span class="registration__phone-prefix">+57</span>
+              <input
+                type="tel"
+                id="celular"
+                class="registration__input registration__input--phone"
+                formControlName="celular"
+                placeholder="3001234567"
+                [class.registration__input--error]="hasError('celular')"
+                autocomplete="tel-national"
+                maxlength="10"
+              >
+            </div>
+            @if (hasError('celular')) {
+              <span class="registration__error">{{ getErrorMessage('celular') }}</span>
+            }
+          </div>
+
+          <!-- Ciudad / Municipio -->
+          <div class="registration__field">
+            <label class="registration__label" for="ciudad_municipio">
+              Ciudad / Municipio <span class="registration__required">*</span>
+            </label>
+            <input
+              type="text"
+              id="ciudad_municipio"
+              class="registration__input"
+              formControlName="ciudad_municipio"
+              placeholder="¿De dónde vienes?"
+              [class.registration__input--error]="hasError('ciudad_municipio')"
+            >
+            @if (hasError('ciudad_municipio')) {
+              <span class="registration__error">{{ getErrorMessage('ciudad_municipio') }}</span>
+            }
+          </div>
+
+          <!-- Género -->
+          <div class="registration__field">
+            <label class="registration__label">
+              Género <span class="registration__required">*</span>
+            </label>
+            <div class="registration__radio-group">
+              @for (option of genderOptions; track option.value) {
+                <label class="registration__radio-label">
+                  <input
+                    type="radio"
+                    formControlName="genero"
+                    [value]="option.value"
+                    class="registration__radio"
+                  >
+                  <span class="registration__radio-custom"></span>
+                  {{ option.label }}
+                </label>
+              }
+            </div>
+            @if (hasError('genero')) {
+              <span class="registration__error">{{ getErrorMessage('genero') }}</span>
+            }
+          </div>
+
+          <!-- Categoría -->
+          <div class="registration__field">
+            <label class="registration__label" for="categoria">
+              Categoría <span class="registration__required">*</span>
+            </label>
+            <select
+              id="categoria"
+              class="registration__input registration__input--select"
+              formControlName="categoria"
+              [class.registration__input--error]="hasError('categoria')"
+            >
+              <option value="" disabled>Selecciona tu categoría</option>
+              @for (cat of categoryOptions; track cat.value) {
+                <option [value]="cat.value">{{ cat.label }}</option>
+              }
+            </select>
+            @if (hasError('categoria')) {
+              <span class="registration__error">{{ getErrorMessage('categoria') }}</span>
+            }
+            @if (is6kRace) {
+              <span class="registration__hint registration__hint--success">
+                🏅 ¡Esta categoría es gratuita! Todos reciben medalla.
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Valor de inscripción -->
+        <div class="registration__price-banner">
+          @if (is6kRace) {
+            <span class="registration__price-label">Inscripción:</span>
+            <span class="registration__price-amount registration__price-amount--free">GRATIS</span>
+          } @else {
+            <span class="registration__price-label">Valor de inscripción:</span>
+            <span class="registration__price-amount">$30.000 COP</span>
+          }
+        </div>
+
+        <!-- Términos -->
+        <div class="registration__terms">
+          <label class="registration__checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="terminos"
+              class="registration__checkbox"
+            >
+            <span class="registration__checkbox-custom"></span>
+            Acepto los <a href="#" class="registration__terms-link">términos y condiciones</a>
+            y el <a href="#" class="registration__terms-link">deslinde de responsabilidad</a>
+            <span class="registration__required">*</span>
+          </label>
+          @if (hasError('terminos')) {
+            <span class="registration__error">Debes aceptar los términos y condiciones</span>
+          }
+        </div>
+
+        <!-- Error global -->
+        @if (submitError) {
+          <div class="registration__global-error">
+            <span>⚠️</span> {{ submitError }}
+          </div>
+        }
+
+        <!-- Submit -->
+        <div class="registration__submit-wrapper">
+          <button
+            type="submit"
+            class="registration__submit"
+            [disabled]="isSubmitting"
+          >
+            @if (isSubmitting) {
+              <span class="registration__spinner"></span>
+              Procesando...
+            } @else {
+              🏃 ¡INSCRIBIRME AHORA!
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</section>

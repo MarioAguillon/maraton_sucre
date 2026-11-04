@@ -1,0 +1,60 @@
+<section class="hero" id="inicio">
+  <!-- Video de fondo -->
+  <div class="hero__video-overlay"></div>
+  <video
+    #videoPlayer
+    class="hero__video"
+    autoplay
+    [muted]="true"
+    muted
+    loop
+    playsinline
+    preload="auto"
+  >
+    <source src="assets/videos/hero-maraton.mp4" type="video/mp4">
+  </video>
+
+  <!-- Contenido principal -->
+  <div class="hero__content">
+    <div class="hero__badge">🏃 9 de Enero de 2027</div>
+    <h1 class="hero__title">
+      <span class="hero__title-fraction">¼</span>
+      <span class="hero__title-text">MARATÓN</span>
+      <span class="hero__title-cities">BOLÍVAR — SUCRE</span>
+    </h1>
+    <p class="hero__subtitle">
+      Vive la emoción de correr entre dos ciudades históricas.<br>
+      ¿Estás listo para el reto?
+    </p>
+    <div class="hero__actions">
+      <a href="#inscripcion" class="hero__cta hero__cta--primary">
+        ¡INSCRÍBETE AHORA!
+      </a>
+      <a href="#categorias" class="hero__cta hero__cta--secondary">
+        VER CATEGORÍAS
+      </a>
+    </div>
+    <div class="hero__info-badges">
+      <div class="hero__info-item">
+        <span class="hero__info-icon">📍</span>
+        <span>Bolívar → Sucre</span>
+      </div>
+      <div class="hero__info-item">
+        <span class="hero__info-icon">🕕</span>
+        <span>6:45 AM Salida</span>
+      </div>
+      <div class="hero__info-item">
+        <span class="hero__info-icon">💰</span>
+        <span>$30.000 COP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="hero__scroll">
+    <div class="hero__scroll-mouse">
+      <div class="hero__scroll-wheel"></div>
+    </div>
+    <span>Desliza</span>
+  </div>
+</section>

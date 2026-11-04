@@ -1,0 +1,65 @@
+<footer class="footer" id="contacto">
+  <div class="footer__container">
+    <div class="footer__grid">
+      <!-- Brand -->
+      <div class="footer__brand">
+        <h3 class="footer__logo">
+          <span class="footer__logo-fraction">¼</span> MARATÓN
+        </h3>
+        <p class="footer__brand-cities">Bolívar — Sucre</p>
+        <p class="footer__brand-desc">
+          El evento deportivo que une dos municipios de Santander en una experiencia de superación y comunidad.
+        </p>
+      </div>
+
+      <!-- Links rápidos -->
+      <div class="footer__links-section">
+        <h4 class="footer__links-title">Enlaces</h4>
+        <nav class="footer__nav">
+          @for (link of quickLinks; track link.label) {
+            <a [href]="link.href" class="footer__nav-link">{{ link.label }}</a>
+          }
+        </nav>
+      </div>
+
+      <!-- Contacto -->
+      <div class="footer__contact">
+        <h4 class="footer__links-title">Contacto</h4>
+        <div class="footer__contact-items">
+          <a href="mailto:contacto@maratonbolivarsucre.com" class="footer__contact-item">
+            <span>📧</span> contacto&#64;maratonbolivarsucre.com
+          </a>
+          <a href="tel:+573001234567" class="footer__contact-item">
+            <span>📞</span> +57 300 123 4567
+          </a>
+          <div class="footer__contact-item">
+            <span>📍</span> Bolívar, Santander - Colombia
+          </div>
+        </div>
+      </div>
+
+      <!-- Redes sociales -->
+      <div class="footer__social-section">
+        <h4 class="footer__links-title">Síguenos</h4>
+        <div class="footer__social">
+          @for (social of socialLinks; track social.name) {
+            <a [href]="social.url" class="footer__social-link" [attr.aria-label]="social.name" target="_blank" rel="noopener noreferrer">
+              {{ social.icon }}
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer__bottom">
+      <p class="footer__copyright">
+        &copy; {{ currentYear }} ¼ Maratón Bolívar - Sucre. Todos los derechos reservados.
+      </p>
+      <div class="footer__bottom-links">
+        <a href="#" class="footer__bottom-link">Términos y Condiciones</a>
+        <a href="#" class="footer__bottom-link">Política de Privacidad</a>
+      </div>
+    </div>
+  </div>
+</footer>

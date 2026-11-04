@@ -1,0 +1,37 @@
+<section class="about" id="quienes-somos">
+  <div class="about__container">
+    <span class="about__tagline">NUESTRA HISTORIA</span>
+    <h2 class="about__heading">¿QUIÉNES SOMOS?</h2>
+
+    <div class="about__content">
+      <div class="about__main-card">
+        <h3 class="about__main-title">EL EVENTO ATLÉTICO QUE UNE A SANTANDER</h3>
+        <p class="about__desc">
+          La <strong>¼ Maratón Bolívar - Sucre</strong> nace de la pasión por el atletismo y el orgullo de nuestra tierra santandereana. 
+          Unimos en un solo latido a dos municipios hermanos a través de una ruta escénica de 10.5 kilómetros de asfalto, montañas y cultura.
+        </p>
+        <p class="about__desc">
+          Más que una competencia, es un festival del deporte que abre sus puertas el <strong>9 de Enero de 2027</strong> a atletas de todo el país 
+          con cronometraje profesional, una bolsa de premiación de <strong>$3.200.000 COP</strong> y la carrera recreativa <strong>6K La Peña - Sucre</strong> 
+          100% gratuita con medalla para cada finalista.
+        </p>
+
+        <div class="about__cta-wrapper">
+          <a href="#inscripcion" class="about__cta-btn">¡SÉ PARTE DE LA HISTORIA!</a>
+        </div>
+      </div>
+
+      <!-- Pillars / Value Grid -->
+      <div class="about__grid">
+        @for (item of pillars; track item.title) {
+          <div class="about__pillar-card">
+            <span class="about__pillar-icon">{{ item.icon }}</span>
+            <h4 class="about__pillar-title">{{ item.title }}</h4>
+            <p class="about__pillar-desc">{{ item.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+

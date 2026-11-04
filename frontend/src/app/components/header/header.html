@@ -1,0 +1,56 @@
+<header class="header" [class.header--scrolled]="isScrolled()">
+  <div class="header__container">
+    <!-- Brand / Logo -->
+    <a href="#inicio" class="header__brand" (click)="closeMobileMenu()">
+      <img src="assets/images/logo_maraton.png" alt="Logo ¼ Maratón Bolívar - Sucre" class="header__logo">
+      <div class="header__brand-text">
+        <span class="header__brand-title">¼ MARATÓN</span>
+        <span class="header__brand-sub">BOLÍVAR · SUCRE</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="header__nav">
+      @for (item of navLinks; track item.label) {
+        <a [href]="item.href" class="header__nav-link">{{ item.label }}</a>
+      }
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header__actions">
+      <a href="#inscripcion" class="header__cta-btn">
+        ¡INSCRIBIRSE!
+      </a>
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        type="button"
+        class="header__hamburger"
+        [class.header__hamburger--open]="mobileMenuOpen()"
+        (click)="toggleMobileMenu()"
+        aria-label="Abrir menú"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  @if (mobileMenuOpen()) {
+    <div class="header__mobile-menu">
+      <nav class="header__mobile-nav">
+        @for (item of navLinks; track item.label) {
+          <a [href]="item.href" class="header__mobile-link" (click)="closeMobileMenu()">
+            {{ item.label }}
+          </a>
+        }
+        <a href="#inscripcion" class="header__mobile-cta" (click)="closeMobileMenu()">
+          ¡INSCRIBIRSE AHORA!
+        </a>
+      </nav>
+    </div>
+  }
+</header>
+

@@ -1,0 +1,60 @@
+@use 'styles/variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap');
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: $font-primary;
+  background-color: $purple-dark;
+  color: $white;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: $blue-accent;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #38bdf8;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $purple-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $purple-light;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $blue-accent;
+}
+
+::selection {
+  background: rgba($blue-accent, 0.3);
+  color: $white;
+}

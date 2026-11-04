@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A0933" />
+      <stop offset="50%" stop-color="#27104A" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#heroGrad)" />
+  <circle cx="960" cy="540" r="350" fill="#6B21A8" opacity="0.15" filter="blur(60px)" />
+  <text x="960" y="520" font-family="Montserrat, Arial, sans-serif" font-size="72" font-weight="900" fill="#0EA5E9" text-anchor="middle" letter-spacing="8">¼ MARATÓN BOLÍVAR - SUCRE</text>
+  <text x="960" y="600" font-family="Montserrat, Arial, sans-serif" font-size="36" font-weight="bold" fill="#10B981" text-anchor="middle" letter-spacing="4">9 DE ENERO DE 2027</text>
+</svg>
+
