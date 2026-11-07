@@ -1,0 +1,565 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+@use '../admin-ui' as ui;
+
+$surface: rgba($purple-card, 0.6);
+$line: rgba($white, 0.08);
+$green: #34D399;
+$amber: #FBBF24;
+
+:host {
+  display: block;
+  min-height: 100svh;
+  background:
+    radial-gradient(ellipse 60% 35% at 80% 0%, rgba($purple-accent, 0.18), transparent 70%),
+    $purple-dark;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// ─── Botones ───────────────────────────────────────
+.btn {
+  @include ui.button;
+
+  &--ghost { @include ui.ghost-vars; }
+  &--excel { --btn-bg: #1D7A46; --btn-bg-hover: #18663A; }
+  &--danger { --btn-bg: #D90A47; --btn-bg-hover: #B80039; }
+
+  &--icon {
+    width: 44px;
+    padding: 0;
+  }
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: $white-dim;
+  cursor: pointer;
+  transition: background-color $transition-fast, color $transition-fast, border-color $transition-fast;
+
+  svg { width: 18px; height: 18px; }
+
+  &:hover { background: rgba($white, 0.08); color: $white; }
+  &--danger:hover { background: rgba($red-cta, 0.15); color: #FF7A9C; border-color: rgba($red-cta, 0.3); }
+
+  &:focus-visible {
+    outline: 2px solid $blue-accent;
+    outline-offset: 1px;
+  }
+}
+
+.code {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: $blue-accent;
+}
+
+// ─── Topbar ────────────────────────────────────────
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  border-bottom: 1px solid $line;
+  background: rgba($purple-dark, 0.85);
+  backdrop-filter: blur(12px);
+
+  &__inner {
+    @include container;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 68px;
+    padding-block: 10px;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $white;
+    text-decoration: none;
+
+    span { display: flex; flex-direction: column; line-height: 1.2; }
+    strong { font-family: $font-heading; font-size: 0.95rem; font-weight: 800; }
+    small { font-size: 0.75rem; color: $gray-subtle; }
+
+    &:focus-visible { outline: 2px solid $blue-accent; outline-offset: 4px; border-radius: 8px; }
+  }
+
+  &__session {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: $white-dim;
+
+    @include respond-to(sm) { display: none; }
+  }
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $red-cta, $purple-accent);
+    font-weight: 800;
+    color: $white;
+  }
+}
+
+// ─── Layout ────────────────────────────────────────
+.dash {
+  @include container;
+  padding-block: clamp(24px, 4vw, 40px) 64px;
+
+  &__title {
+    font-family: $font-heading;
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem);
+    font-weight: 900;
+    color: $white;
+    margin-bottom: 20px;
+  }
+}
+
+// ─── Métricas ──────────────────────────────────────
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric {
+  --accent: #{$red-cta};
+  position: relative;
+  overflow: hidden;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba($white, 0.06), transparent 60%), $surface;
+  border: 1px solid $line;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--accent);
+  }
+
+  &--10k { --accent: #{$blue-accent}; }
+  &--6k { --accent: #{$purple-accent}; }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $white-dim;
+  }
+
+  &__value {
+    margin: 6px 0 2px;
+    font-family: $font-condensed;
+    font-size: clamp(2.4rem, 2rem + 2vw, 3.2rem);
+    line-height: 1;
+    color: $white;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__note {
+    font-size: 0.8rem;
+    color: $gray-subtle;
+  }
+}
+
+// ─── Panel + toolbar ───────────────────────────────
+.panel {
+  padding: clamp(16px, 3vw, 24px);
+  border-radius: 20px;
+  background: $surface;
+  border: 1px solid $line;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  &__title {
+    font-family: $font-heading;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: $white;
+  }
+
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
+  &__search {
+    position: relative;
+    flex: 1 1 240px;
+    max-width: 340px;
+
+    @include respond-to(md) { max-width: none; }
+
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      color: $gray-subtle;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    input {
+      @include ui.input;
+      padding-left: 42px;
+      border-radius: 50px;
+    }
+  }
+
+  &__select {
+    flex: 1 1 200px;
+    max-width: 260px;
+
+    @include respond-to(md) { max-width: none; }
+
+    select {
+      @include ui.input;
+      border-radius: 50px;
+      cursor: pointer;
+    }
+  }
+}
+
+.results {
+  min-height: 1.5em;
+  margin: 14px 0 10px;
+  font-size: 0.85rem;
+  color: $gray-subtle;
+
+  strong { color: $white; }
+
+  &__clear {
+    border: 0;
+    background: none;
+    color: $blue-accent;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 48px 16px;
+  color: $white-dim;
+  text-align: center;
+
+  &--error { color: #FF7A9C; }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba($white, 0.25);
+  border-top-color: $blue-accent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+// ─── Tabla ─────────────────────────────────────────
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid $line;
+
+  &:focus-visible { outline: 2px solid $blue-accent; }
+}
+
+.table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  color: $white-dim;
+
+  thead th {
+    position: sticky;
+    top: 0;
+    padding: 12px 14px;
+    background: #220844;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: left;
+    color: $gray-subtle;
+    white-space: nowrap;
+
+    button {
+      display: inline-flex;
+      gap: 4px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+
+      span { opacity: 0.5; }
+
+      &:hover,
+      &:focus-visible { color: $white; }
+    }
+
+    &[aria-sort] { color: $white; }
+    &[aria-sort] button span { opacity: 1; color: $blue-accent; }
+  }
+
+  td,
+  tbody th {
+    padding: 12px 14px;
+    border-top: 1px solid $line;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: background-color $transition-fast;
+
+    &:hover { background: rgba($white, 0.04); }
+  }
+
+  &__athlete {
+    font-weight: 400;
+
+    span { display: block; font-weight: 700; color: $white; }
+    small { font-size: 0.75rem; color: $gray-subtle; }
+  }
+
+  &__link {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible { color: $blue-accent; text-decoration: underline; }
+  }
+
+  &__actions {
+    text-align: right;
+  }
+}
+
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba($blue-accent, 0.12);
+  color: #7FE7FF;
+
+  &--6k {
+    background: rgba($purple-accent, 0.16);
+    color: #D8B4FE;
+  }
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &--confirmado { color: $green; }
+  &--pendiente { color: $amber; }
+  &--cancelado { color: #FF7A9C; }
+}
+
+// ─── Toast ─────────────────────────────────────────
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+  transform: translateX(-50%);
+  pointer-events: none;
+
+  p {
+    padding: 12px 20px;
+    border-radius: 50px;
+    background: $white;
+    color: $purple-dark;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: $shadow-card;
+    animation: toast-in 0.25s ease-out;
+  }
+}
+
+// ─── Modales ───────────────────────────────────────
+.modal {
+  width: min(100% - 32px, 720px);
+  max-height: calc(100svh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid rgba($white, 0.12);
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba($white, 0.05), transparent 50%), #1F0640;
+  color: $white-dim;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+
+  &--sm { width: min(100% - 32px, 460px); text-align: center; }
+
+  &::backdrop {
+    background: rgba(8, 1, 18, 0.75);
+    backdrop-filter: blur(4px);
+  }
+
+  &[open] { animation: modal-in 0.22s ease-out; }
+
+  &__body {
+    padding: clamp(20px, 4vw, 32px);
+
+    h2 {
+      font-family: $font-heading;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: $white;
+    }
+  }
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  &__danger-icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgba($red-cta, 0.15);
+    color: #FF7A9C;
+
+    svg { width: 28px; height: 28px; }
+  }
+
+  #delete-desc {
+    margin-top: 10px;
+    line-height: 1.6;
+
+    strong { color: $white; }
+  }
+
+  &__error {
+    @include ui.error-text;
+    min-height: 1.2em;
+    margin-top: 14px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+
+    .modal--sm & { justify-content: center; }
+
+    @include respond-to(sm) {
+      .btn { flex: 1 1 auto; }
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.field {
+  @include ui.field;
+
+  input,
+  select { @include ui.input; }
+
+  small {
+    font-size: 0.72rem;
+    color: $gray-subtle;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes modal-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal[open],
+  .toast p { animation: none; }
+  .spinner { animation-duration: 2s; }
+}

@@ -1,0 +1,285 @@
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="topbar__brand" routerLink="/" aria-label="Ir al sitio público">
+      <img src="assets/images/logo_maraton-96.webp" alt="" width="40" height="40">
+      <span>
+        <strong>Panel del organizador</strong>
+        <small>¼ Maratón Bolívar - Sucre</small>
+      </span>
+    </a>
+    <div class="topbar__session">
+      <span class="topbar__user">
+        <span class="topbar__avatar" aria-hidden="true">{{ auth.username().charAt(0).toUpperCase() }}</span>
+        {{ auth.username() }}
+      </span>
+      <button type="button" class="btn btn--ghost" (click)="auth.logout()">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" /></svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="dash">
+  <h1 class="dash__title">Inscripciones</h1>
+
+  <!-- Métricas -->
+  <section class="metrics" aria-label="Resumen de inscripciones">
+    <article class="metric metric--total">
+      <p class="metric__label">Total inscritos</p>
+      <p class="metric__value">{{ totals().total }}</p>
+      <p class="metric__note">Ambas distancias</p>
+    </article>
+    <article class="metric metric--10k">
+      <p class="metric__label">¼ Maratón 10.5K</p>
+      <p class="metric__value">{{ totals().tenK }}</p>
+      <p class="metric__note">Parque Bolívar → Sucre</p>
+    </article>
+    <article class="metric metric--6k">
+      <p class="metric__label">Carrera 6K</p>
+      <p class="metric__value">{{ totals().sixK }}</p>
+      <p class="metric__note">La Peña → Sucre</p>
+    </article>
+  </section>
+
+  <!-- Herramientas -->
+  <section class="panel" aria-labelledby="table-title">
+    <div class="toolbar">
+      <h2 class="toolbar__title" id="table-title">Atletas</h2>
+
+      <div class="toolbar__controls">
+        <div class="toolbar__search">
+          <label class="sr-only" for="search">Buscar por nombre, cédula o código</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input
+            id="search"
+            type="search"
+            placeholder="Nombre, cédula o código…"
+            autocomplete="off"
+            [value]="search()"
+            (input)="search.set($any($event.target).value)"
+          >
+        </div>
+
+        <div class="toolbar__select">
+          <label class="sr-only" for="category-filter">Filtrar por categoría</label>
+          <select id="category-filter" [value]="categoryFilter()" (change)="categoryFilter.set($any($event.target).value)">
+            <option value="">Todas las categorías</option>
+            @for (c of categories; track c.value) {
+              <option [value]="c.value">{{ c.label }}</option>
+            }
+          </select>
+        </div>
+
+        <button type="button" class="btn btn--excel" (click)="exportExcel()" [disabled]="!filtered().length || exporting()" [attr.aria-busy]="exporting()">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M9 13l4 5M13 13l-4 5" /></svg>
+          {{ exporting() ? 'Generando…' : 'Exportar a Excel (.xlsx)' }}
+        </button>
+
+        <button type="button" class="btn btn--ghost btn--icon" (click)="load()" aria-label="Recargar lista" [disabled]="loadState() === 'loading'">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <p class="results" role="status" aria-live="polite">
+      @if (loadState() === 'ready') {
+        Mostrando <strong>{{ filtered().length }}</strong> de {{ totals().total }} atletas
+        @if (hasFilters()) {
+          · <button type="button" class="results__clear" (click)="clearFilters()">Limpiar filtros</button>
+        }
+      }
+    </p>
+
+    @switch (loadState()) {
+      @case ('loading') {
+        <div class="state" aria-busy="true"><span class="spinner" aria-hidden="true"></span> Cargando inscripciones…</div>
+      }
+      @case ('error') {
+        <div class="state state--error" role="alert">
+          No se pudieron cargar las inscripciones.
+          <button type="button" class="btn btn--ghost" (click)="load()">Reintentar</button>
+        </div>
+      }
+      @default {
+        @if (filtered().length) {
+          <div class="table-wrap" tabindex="0" role="region" aria-labelledby="table-title">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" [attr.aria-sort]="ariaSort('codigo_inscripcion')">
+                    <button type="button" (click)="sortBy('codigo_inscripcion')">Código <span aria-hidden="true">↕</span></button>
+                  </th>
+                  <th scope="col" [attr.aria-sort]="ariaSort('nombre')">
+                    <button type="button" (click)="sortBy('nombre')">Atleta <span aria-hidden="true">↕</span></button>
+                  </th>
+                  <th scope="col">Cédula</th>
+                  <th scope="col">Género</th>
+                  <th scope="col" [attr.aria-sort]="ariaSort('edad_al_evento')">
+                    <button type="button" (click)="sortBy('edad_al_evento')">Edad <span aria-hidden="true">↕</span></button>
+                  </th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Celular</th>
+                  <th scope="col">Ciudad</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col" [attr.aria-sort]="ariaSort('created_at')">
+                    <button type="button" (click)="sortBy('created_at')">Registro <span aria-hidden="true">↕</span></button>
+                  </th>
+                  <th scope="col"><span class="sr-only">Acciones</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (a of filtered(); track a.id) {
+                  <tr>
+                    <td><code class="code">{{ a.codigo_inscripcion }}</code></td>
+                    <th scope="row" class="table__athlete">
+                      <span>{{ a.nombre }} {{ a.apellidos }}</span>
+                      <small>{{ a.correo }}</small>
+                    </th>
+                    <td>{{ a.cedula || '—' }}</td>
+                    <td>{{ a.genero === 'femenino' ? 'F' : 'M' }}</td>
+                    <td>{{ a.edad_al_evento }}</td>
+                    <td><span class="tag" [class.tag--6k]="a.tipo_carrera === '6k_la_pena'">{{ categoryLabel(a.categoria) }}</span></td>
+                    <td><a class="table__link" [href]="'tel:+57' + a.celular">{{ a.celular }}</a></td>
+                    <td>{{ a.ciudad_municipio }}</td>
+                    <td><span class="status" [class]="'status status--' + a.estado">{{ statusLabel(a.estado) }}</span></td>
+                    <td><time [attr.datetime]="a.created_at">{{ a.created_at | date: 'dd/MM/yyyy HH:mm' }}</time></td>
+                    <td class="table__actions">
+                      <button type="button" class="icon-btn" (click)="openEdit(a)" [attr.aria-label]="'Editar a ' + a.nombre + ' ' + a.apellidos">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                      </button>
+                      <button type="button" class="icon-btn icon-btn--danger" (click)="openDelete(a)" [attr.aria-label]="'Eliminar a ' + a.nombre + ' ' + a.apellidos">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" /></svg>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="state">
+            @if (hasFilters()) {
+              Ningún atleta coincide con la búsqueda.
+              <button type="button" class="btn btn--ghost" (click)="clearFilters()">Limpiar filtros</button>
+            } @else {
+              Aún no hay inscripciones registradas.
+            }
+          </div>
+        }
+      }
+    }
+  </section>
+</main>
+
+<!-- Aviso flotante -->
+<div class="toast" role="status" aria-live="polite">
+  @if (notice(); as message) { <p>{{ message }}</p> }
+</div>
+
+<!-- Modal: editar -->
+<dialog #editDialog class="modal" aria-labelledby="edit-title" (close)="onDialogClosed()" (cancel)="saving() && $event.preventDefault()">
+  @if (editing(); as athlete) {
+    <form class="modal__body" [formGroup]="editForm" (ngSubmit)="saveEdit()" novalidate>
+      <header class="modal__head">
+        <div>
+          <h2 id="edit-title">Editar atleta</h2>
+          <p><code class="code">{{ athlete.codigo_inscripcion }}</code></p>
+        </div>
+        <button type="button" class="icon-btn" aria-label="Cerrar" (click)="closeDialog(editDialog)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+      </header>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="f-nombre">Nombres</label>
+          <input id="f-nombre" formControlName="nombre" autocomplete="off" [attr.aria-invalid]="fieldInvalid('nombre')">
+        </div>
+        <div class="field">
+          <label for="f-apellidos">Apellidos</label>
+          <input id="f-apellidos" formControlName="apellidos" autocomplete="off" [attr.aria-invalid]="fieldInvalid('apellidos')">
+        </div>
+        <div class="field">
+          <label for="f-cedula">Cédula</label>
+          <input id="f-cedula" formControlName="cedula" inputmode="numeric" autocomplete="off" [attr.aria-invalid]="fieldInvalid('cedula')" aria-describedby="f-cedula-hint">
+          <small id="f-cedula-hint">Solo números (5 a 12 dígitos)</small>
+        </div>
+        <div class="field">
+          <label for="f-fecha">Fecha de nacimiento</label>
+          <input id="f-fecha" type="date" formControlName="fecha_nacimiento" [attr.aria-invalid]="fieldInvalid('fecha_nacimiento')">
+        </div>
+        <div class="field">
+          <label for="f-correo">Correo</label>
+          <input id="f-correo" type="email" formControlName="correo" autocomplete="off" [attr.aria-invalid]="fieldInvalid('correo')">
+        </div>
+        <div class="field">
+          <label for="f-celular">Celular</label>
+          <input id="f-celular" type="tel" inputmode="numeric" formControlName="celular" [attr.aria-invalid]="fieldInvalid('celular')" aria-describedby="f-celular-hint">
+          <small id="f-celular-hint">10 dígitos, inicia con 3</small>
+        </div>
+        <div class="field">
+          <label for="f-ciudad">Ciudad / municipio</label>
+          <input id="f-ciudad" formControlName="ciudad_municipio" [attr.aria-invalid]="fieldInvalid('ciudad_municipio')">
+        </div>
+        <div class="field">
+          <label for="f-genero">Género</label>
+          <select id="f-genero" formControlName="genero">
+            <option value="masculino">Masculino</option>
+            <option value="femenino">Femenino</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-categoria">Categoría</label>
+          <select id="f-categoria" formControlName="categoria">
+            @for (c of categories; track c.value) {
+              <option [value]="c.value">{{ c.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-estado">Estado</label>
+          <select id="f-estado" formControlName="estado">
+            @for (s of statuses; track s.value) {
+              <option [value]="s.value">{{ s.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <p class="modal__error" role="alert">@if (dialogError(); as e) { {{ e }} }</p>
+
+      <footer class="modal__actions">
+        <button type="button" class="btn btn--ghost" (click)="closeDialog(editDialog)" [disabled]="saving()">Cancelar</button>
+        <button type="submit" class="btn" [disabled]="saving()" [attr.aria-busy]="saving()">
+          {{ saving() ? 'Guardando…' : 'Guardar cambios' }}
+        </button>
+      </footer>
+    </form>
+  }
+</dialog>
+
+<!-- Modal: eliminar -->
+<dialog #deleteDialog class="modal modal--sm" role="alertdialog" aria-labelledby="delete-title" aria-describedby="delete-desc" (close)="onDialogClosed()" (cancel)="saving() && $event.preventDefault()">
+  @if (deleting(); as athlete) {
+    <div class="modal__body">
+      <div class="modal__danger-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+      </div>
+      <h2 id="delete-title">¿Eliminar este registro?</h2>
+      <p id="delete-desc">
+        Se eliminará definitivamente la inscripción de <strong>{{ athlete.nombre }} {{ athlete.apellidos }}</strong>
+        (<code class="code">{{ athlete.codigo_inscripcion }}</code>). Esta acción no se puede deshacer.
+      </p>
+
+      <p class="modal__error" role="alert">@if (dialogError(); as e) { {{ e }} }</p>
+
+      <footer class="modal__actions">
+        <button type="button" class="btn btn--ghost" (click)="closeDialog(deleteDialog)" [disabled]="saving()" autofocus>Cancelar</button>
+        <button type="button" class="btn btn--danger" (click)="confirmDelete()" [disabled]="saving()" [attr.aria-busy]="saving()">
+          {{ saving() ? 'Eliminando…' : 'Sí, eliminar' }}
+        </button>
+      </footer>
+    </div>
+  }
+</dialog>

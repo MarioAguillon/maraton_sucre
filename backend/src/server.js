@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { globalLimiter } = require('./middlewares/rateLimiter');
 const registrationRoutes = require('./routes/registration.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,7 +17,7 @@ app.use(globalLimiter);
 // ─── CORS ───────────────────────────────────────────────────
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:4200',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
 // ─── Rutas ──────────────────────────────────────────────────
 app.use('/api/inscripciones', registrationRoutes);
+app.use('/api/admin', adminRoutes);
 
 // ─── Health Check ───────────────────────────────────────────
 app.get('/api/health', (req, res) => {

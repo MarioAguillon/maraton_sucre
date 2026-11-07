@@ -1,0 +1,72 @@
+<main class="login">
+  <div class="login__glow" aria-hidden="true"></div>
+
+  <section class="login__card" aria-labelledby="login-title">
+    <picture>
+      <source srcset="assets/images/logo_maraton-96.webp 1x, assets/images/logo_maraton-192.webp 2x" type="image/webp">
+      <img class="login__logo" src="assets/images/logo_maraton-192.png" alt="" width="72" height="72">
+    </picture>
+
+    <p class="login__kicker">PANEL DEL ORGANIZADOR</p>
+    <h1 class="login__title" id="login-title">¼ Maratón Bolívar - Sucre</h1>
+    <p class="login__subtitle">Acceso restringido al equipo organizador.</p>
+
+    <form class="login__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="login__field">
+        <label for="admin-user">Usuario</label>
+        <input
+          #userInput
+          id="admin-user"
+          type="text"
+          formControlName="usuario"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+          [attr.aria-invalid]="form.controls.usuario.invalid && form.controls.usuario.touched"
+          [attr.aria-describedby]="error() ? 'login-error' : null"
+        >
+      </div>
+
+      <div class="login__field">
+        <label for="admin-pass">Contraseña</label>
+        <div class="login__password">
+          <input
+            id="admin-pass"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="contrasena"
+            autocomplete="current-password"
+            [attr.aria-invalid]="form.controls.contrasena.invalid && form.controls.contrasena.touched"
+            [attr.aria-describedby]="error() ? 'login-error' : null"
+          >
+          <button
+            type="button"
+            class="login__toggle"
+            [attr.aria-pressed]="showPassword()"
+            [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            (click)="showPassword.set(!showPassword())"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+              <circle cx="12" cy="12" r="3" />
+              @if (showPassword()) { <path d="M3 3l18 18" /> }
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="login__error" id="login-error" role="alert" aria-live="assertive">
+        @if (error(); as message) { {{ message }} }
+      </p>
+
+      <button type="submit" class="login__submit" [disabled]="submitting()" [attr.aria-busy]="submitting()">
+        @if (submitting()) {
+          <span class="login__spinner" aria-hidden="true"></span> Verificando…
+        } @else {
+          INGRESAR AL PANEL
+        }
+      </button>
+    </form>
+
+    <a class="login__back" routerLink="/">← Volver al sitio público</a>
+  </section>
+</main>

@@ -1,0 +1,97 @@
+// Piezas de UI compartidas por el panel de administración.
+@use '../../styles/variables' as *;
+
+@mixin field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $white-dim;
+  }
+}
+
+@mixin input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba($white, 0.14);
+  background: rgba($purple-dark, 0.7);
+  color: $white;
+  font: inherit;
+  font-size: 0.95rem;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &::placeholder { color: $gray-subtle; }
+
+  &:focus-visible {
+    outline: none;
+    border-color: $blue-accent;
+    box-shadow: 0 0 0 3px rgba($blue-accent, 0.3);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: $red-cta;
+  }
+}
+
+/** Botón base; las variantes solo cambian --btn-bg / --btn-bg-hover / --btn-border. */
+@mixin button($bg: $red-cta, $bg-hover: $red-cta-hover) {
+  --btn-bg: #{$bg};
+  --btn-bg-hover: #{$bg-hover};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid var(--btn-border, transparent);
+  border-radius: 50px;
+  background: var(--btn-bg);
+  color: $white;
+  font-family: $font-heading;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform $transition-fast, background-color $transition-fast, opacity $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: var(--btn-bg-hover);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $white;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+@mixin ghost-vars {
+  --btn-bg: #{rgba($white, 0.06)};
+  --btn-bg-hover: #{rgba($white, 0.12)};
+  --btn-border: #{rgba($white, 0.16)};
+}
+
+@mixin error-text {
+  font-size: 0.8rem;
+  color: #FF7A9C; // fucsia aclarado: contraste AA sobre fondo oscuro
+}
