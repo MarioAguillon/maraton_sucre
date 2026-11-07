@@ -3,130 +3,145 @@
 
 .hero {
   position: relative;
-  height: 100vh;
-  min-height: 700px;
+  min-height: 100vh;
+  min-height: 100svh; // evita el salto de la barra de URL en móvil
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-
-  &__video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      180deg,
-      rgba($purple-dark, 0.55) 0%,
-      rgba($purple-dark, 0.3) 45%,
-      rgba($purple-dark, 0.85) 100%
-    );
-    z-index: 2;
-    pointer-events: none;
-  }
+  padding: clamp(96px, 14vh, 140px) 0 clamp(72px, 10vh, 110px);
+  // Fondo de marca: se ve antes de que cargue el vídeo o si no se reproduce.
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 15%, rgba($red-cta, 0.28), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 85% 80%, rgba($blue-accent, 0.18), transparent 60%),
+    linear-gradient(160deg, #2a0a4f 0%, $purple-dark 60%);
 
   &__video {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    inset: 0;
     width: 100%;
     height: 100%;
-    min-width: 100%;
-    min-height: 100%;
-    transform: translate(-50%, -50%);
     object-fit: cover;
     z-index: 1;
-    background: #000;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+
+    &--visible {
+      opacity: 1;
+    }
+  }
+
+  &__video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    // Overlay más denso en la zona del texto para garantizar contraste AA sobre cualquier frame.
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 50%, rgba($purple-dark, 0.55), transparent 75%),
+      linear-gradient(
+        180deg,
+        rgba($purple-dark, 0.6) 0%,
+        rgba($purple-dark, 0.35) 45%,
+        rgba($purple-dark, 0.92) 100%
+      );
   }
 
   &__content {
     position: relative;
     z-index: 3;
+    width: 100%;
+    max-width: 1100px;
     text-align: center;
     padding: 0 20px;
-    animation: fadeInUp 1s ease-out;
+    // Solo transform: el texto (LCP) es visible desde el primer frame.
+    animation: heroRise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  &__icon {
+    width: 1.15em;
+    height: 1.15em;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    &--fill {
+      fill: currentColor;
+      stroke: none;
+    }
   }
 
   &__badge {
-    display: inline-block;
-    padding: 10px 24px;
-    background: rgba($red-cta, 0.2);
-    border: 1px solid rgba($red-cta, 0.6);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px;
+    background: rgba($red-cta, 0.22);
+    border: 1px solid rgba($red-cta, 0.7);
     border-radius: 50px;
     color: $white;
-    font-family: $font-primary;
-    font-size: 0.95rem;
+    font-size: clamp(0.78rem, 0.7rem + 0.4vw, 0.95rem);
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    margin-bottom: 24px;
-    animation: pulse 2s infinite;
+    margin-bottom: clamp(18px, 3vh, 28px);
+    backdrop-filter: blur(6px);
   }
 
   &__title {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 20px;
+    gap: clamp(2px, 0.6vw, 8px);
+    margin-bottom: clamp(16px, 2.5vh, 24px);
+    font-weight: 400;
   }
 
   &__title-fraction {
     font-family: $font-condensed;
-    font-size: 7.5rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, $white, #E2E8F0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 0.9;
-    filter: drop-shadow(0 6px 25px rgba(255, 11, 83, 0.35));
-
-    @include respond-to(md) {
-      font-size: 5rem;
-    }
+    font-size: clamp(4.5rem, 3rem + 7vw, 9rem);
+    line-height: 0.85;
+    color: $white;
+    text-shadow: 0 6px 30px rgba($red-cta, 0.45);
   }
 
   &__title-text {
     font-family: $font-condensed;
-    font-size: 5rem;
-    font-weight: 900;
+    font-size: clamp(3rem, 1.6rem + 7vw, 7.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.06em;
     color: $white;
-    letter-spacing: 10px;
     text-transform: uppercase;
-    line-height: 1;
-
-    @include respond-to(md) {
-      font-size: 2.8rem;
-      letter-spacing: 5px;
-    }
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
   }
 
   &__title-cities {
     font-family: $font-heading;
-    font-size: 2rem;
+    font-size: clamp(1rem, 0.7rem + 1.6vw, 2.1rem);
     font-weight: 800;
     color: $blue-accent;
-    letter-spacing: 8px;
+    letter-spacing: 0.3em;
+    // compensa el tracking del último carácter para centrar ópticamente
+    margin-right: -0.3em;
     text-transform: uppercase;
-
-    @include respond-to(md) {
-      font-size: 1.2rem;
-      letter-spacing: 4px;
-    }
   }
 
   &__subtitle {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
     color: $white-dim;
-    max-width: 600px;
-    margin: 0 auto 36px;
-    line-height: 1.7;
+    max-width: 36ch;
+    margin: 0 auto clamp(28px, 4vh, 40px);
+    line-height: 1.6;
+    text-wrap: balance;
+  }
 
-    @include respond-to(md) {
-      font-size: 1rem;
-    }
+  &__subtitle-cta {
+    display: block;
+    color: $white;
+    font-weight: 600;
   }
 
   &__actions {
@@ -134,85 +149,130 @@
     gap: 16px;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 40px;
+    margin-bottom: clamp(28px, 4vh, 40px);
+
+    @include respond-to(sm) {
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 340px;
+      margin-inline: auto;
+    }
   }
 
   &__cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 52px;
     padding: 16px 36px;
     font-family: $font-heading;
-    font-size: 1rem;
+    font-size: clamp(0.88rem, 0.82rem + 0.25vw, 1rem);
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.1em;
     border-radius: 50px;
     text-decoration: none;
-    transition: all $transition-fast;
+    transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast, color $transition-fast, border-color $transition-fast;
     cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid $white;
+      outline-offset: 3px;
+    }
 
     &--primary {
       background: $red-cta;
       color: $white;
-      border: none;
       box-shadow: $shadow-glow-cta;
 
       &:hover {
+        color: $white;
         background: $red-cta-hover;
         transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(255, 11, 83, 0.6);
+        box-shadow: 0 12px 35px rgba($red-cta, 0.6);
       }
     }
 
     &--secondary {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba($white, 0.08);
       color: $white;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba($white, 0.35);
       backdrop-filter: blur(10px);
 
       &:hover {
         border-color: $blue-accent;
         color: $blue-accent;
-        background: rgba(0, 210, 255, 0.1);
+        background: rgba($blue-accent, 0.1);
         transform: translateY(-3px);
       }
     }
 
-    @include respond-to(sm) {
-      padding: 14px 28px;
-      font-size: 0.85rem;
+    &:active {
+      transform: translateY(0);
     }
   }
 
   &__info-badges {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
+    list-style: none;
   }
 
   &__info-item {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
-    background: rgba(43, 10, 82, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 10px 18px;
+    background: rgba($purple-card, 0.7);
+    border: 1px solid rgba($white, 0.14);
     border-radius: 50px;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 0.75rem + 0.2vw, 0.9rem);
     font-weight: 600;
     color: $white-dim;
+    backdrop-filter: blur(6px);
+
+    .hero__icon {
+      color: $blue-accent;
+    }
   }
 
-  &__info-icon {
+  // Botón pausa/play del vídeo
+  &__video-toggle {
+    position: absolute;
+    // Esquina inferior IZQUIERDA: la derecha la ocupa el botón flotante de WhatsApp.
+    left: clamp(16px, 3vw, 32px);
+    bottom: clamp(16px, 3vw, 32px);
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba($white, 0.35);
+    background: rgba($purple-dark, 0.55);
+    color: $white;
     font-size: 1.1rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background-color $transition-fast, border-color $transition-fast;
+
+    &:hover {
+      background: rgba($purple-dark, 0.8);
+      border-color: $blue-accent;
+    }
+
+    &:focus-visible {
+      outline: 3px solid $blue-accent;
+      outline-offset: 3px;
+    }
   }
 
-  // Scroll indicator
+  // Indicador de scroll
   &__scroll {
     position: absolute;
-    bottom: 30px;
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
@@ -220,11 +280,22 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    color: rgba($white, 0.6);
+    color: rgba($white, 0.75);
     font-size: 0.75rem;
-    letter-spacing: 2px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     animation: bounce 2s infinite;
+
+    &:hover,
+    &:focus-visible {
+      color: $white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-accent;
+      outline-offset: 6px;
+      border-radius: 8px;
+    }
 
     @include respond-to(md) {
       display: none;
@@ -234,7 +305,7 @@
   &__scroll-mouse {
     width: 24px;
     height: 38px;
-    border: 2px solid rgba($white, 0.35);
+    border: 2px solid rgba($white, 0.45);
     border-radius: 12px;
     display: flex;
     justify-content: center;
@@ -248,23 +319,38 @@
     border-radius: 2px;
     animation: scrollWheel 1.5s infinite;
   }
+
+  &__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__content,
+    &__scroll,
+    &__scroll-wheel {
+      animation: none;
+    }
+
+    &__video {
+      transition: none;
+    }
+
+    &__cta:hover {
+      transform: none;
+    }
+  }
 }
 
 // ─── Animaciones ─────────────────────────────────────────────
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+@keyframes heroRise {
+  from { transform: translateY(24px); }
+  to { transform: translateY(0); }
 }
 
 @keyframes bounce {

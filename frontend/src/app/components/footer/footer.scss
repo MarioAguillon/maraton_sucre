@@ -52,7 +52,7 @@
   }
 
   &__brand-desc {
-    color: rgba($white, 0.5);
+    color: rgba($white, 0.65);
     font-size: 0.9rem;
     line-height: 1.6;
   }
@@ -72,6 +72,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    list-style: none;
   }
 
   &__nav-link {
@@ -83,10 +84,29 @@
     &:hover {
       color: $blue-accent;
     }
+
+    &:focus-visible {
+      outline: 2px solid $blue-accent;
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+  }
+
+  // Iconos de línea
+  &__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: $blue-accent;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   // Contact
   &__contact-items {
+    font-style: normal;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -94,10 +114,10 @@
 
   &__contact-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
-    color: $gray-subtle;
-    font-size: 0.85rem;
+    color: $white-dim;
+    font-size: 0.88rem;
     text-decoration: none;
     transition: color $transition-fast;
 
@@ -105,15 +125,39 @@
       color: $blue-accent;
     }
 
+    &--static:hover {
+      color: $white-dim;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-accent;
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
     @include respond-to(sm) {
       justify-content: center;
     }
+  }
+
+  &__contact-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+
+  &__contact-note {
+    font-size: 0.75rem;
+    color: $gray-subtle;
   }
 
   // Social
   &__social {
     display: flex;
     gap: 12px;
+    list-style: none;
 
     @include respond-to(sm) {
       justify-content: center;
@@ -127,15 +171,43 @@
     align-items: center;
     justify-content: center;
     background: rgba($white, 0.06);
+    border: 1px solid rgba($white, 0.1);
     border-radius: 12px;
-    font-size: 1.3rem;
+    color: $white;
     text-decoration: none;
-    transition: all $transition-normal;
+    transition: transform $transition-fast, background-color $transition-fast, border-color $transition-fast;
 
     &:hover {
-      background: rgba($blue-accent, 0.2);
+      color: $white;
       transform: translateY(-3px);
     }
+
+    &--facebook:hover {
+      background: #1877F2;
+      border-color: #1877F2;
+    }
+
+    &--whatsapp:hover {
+      background: #1FAF5A;
+      border-color: #1FAF5A;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-accent;
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  &__brand-icon {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
   }
 
   // Bottom
@@ -155,8 +227,55 @@
   }
 
   &__copyright {
-    color: rgba($white, 0.3);
+    color: rgba($white, 0.6);
     font-size: 0.8rem;
+  }
+
+  &__credit {
+    white-space: nowrap;
+
+    &::before {
+      content: '·';
+      margin: 0 8px;
+    }
+
+    @include respond-to(sm) {
+      display: block;
+      margin-top: 6px;
+
+      &::before {
+        content: none;
+      }
+    }
+  }
+
+  &__credit-link {
+    color: $blue-accent;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid rgba($blue-accent, 0.4);
+    transition: color $transition-fast, border-color $transition-fast;
+
+    &:hover {
+      color: $green-accent;
+      border-color: $green-accent;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-accent;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+  }
+
+  &__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
   &__bottom-links {
@@ -165,7 +284,7 @@
   }
 
   &__bottom-link {
-    color: rgba($white, 0.3);
+    color: rgba($white, 0.6);
     font-size: 0.8rem;
     text-decoration: none;
     transition: color $transition-fast;

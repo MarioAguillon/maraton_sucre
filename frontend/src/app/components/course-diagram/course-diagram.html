@@ -1,0 +1,164 @@
+<figure class="course">
+  <!-- ─── Esquema: vista desde el sur (Bolívar derecha → Sucre izquierda) ─── -->
+  <svg
+    class="course__map"
+    viewBox="0 0 600 300"
+    role="img"
+    [attr.aria-labelledby]="uid() + '-map-title ' + uid() + '-map-desc'"
+  >
+    <title [attr.id]="uid() + '-map-title'">Trazado {{ course().title }}</title>
+    <desc [attr.id]="uid() + '-map-desc'">{{ mapDescription() }}</desc>
+
+    <defs>
+      <!-- Degradado en el sentido de carrera: derecha (salida) → izquierda (meta) -->
+      <linearGradient [attr.id]="uid() + '-route'" x1="1" y1="0" x2="0" y2="0">
+        <stop offset="0" stop-color="#FF0B53" />
+        <stop offset="0.55" stop-color="#A855F7" />
+        <stop offset="1" stop-color="#00E676" />
+      </linearGradient>
+      <pattern [attr.id]="uid() + '-grid'" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M40 0H0V40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+      </pattern>
+    </defs>
+
+    <rect width="600" height="300" rx="18" [attr.fill]="'url(#' + uid() + '-grid)'" />
+
+    <!-- Norte arriba: mirando desde el sur, el este (Bolívar) queda a la derecha -->
+    <g class="course__north" transform="translate(42 46)" aria-hidden="true">
+      <circle r="20" />
+      <path d="M0 -14 L6 4 L0 0 L-6 4 Z" />
+      <text y="-26" text-anchor="middle">N</text>
+    </g>
+
+    <text class="course__direction" x="300" y="284" text-anchor="middle" aria-hidden="true">◀ SENTIDO DE CARRERA</text>
+
+    <!-- Vía completa (referencia) y tramo de esta carrera -->
+    <path class="course__road" [attr.d]="roadPath" />
+    <path class="course__route-shadow" [attr.d]="activePath()" />
+    <path
+      class="course__route"
+      [attr.d]="activePath()"
+      [attr.stroke]="'url(#' + uid() + '-route)'"
+      pathLength="1"
+    />
+
+    <!-- Municipios -->
+    <text class="course__town" [attr.x]="bolivar.x + 10" [attr.y]="bolivar.y - 46" text-anchor="end">BOLÍVAR</text>
+    <text class="course__town" [attr.x]="sucre.x - 10" [attr.y]="sucre.y + 34" text-anchor="start">SUCRE</text>
+    @if (startsMidRoad()) {
+      <circle class="course__road-end" [attr.cx]="bolivar.x" [attr.cy]="bolivar.y" r="6" />
+    }
+
+    <!-- Marcadores de km -->
+    @for (m of kmMarkers(); track m.km) {
+      <g class="course__km" [attr.transform]="'translate(' + m.x + ' ' + m.y + ')'">
+        <circle r="13" />
+        <text dy="5" text-anchor="middle">{{ m.km }}</text>
+      </g>
+    }
+
+    <!-- Puntos de interés en el tramo -->
+    @for (w of waypoints(); track w.km) {
+      <g [class]="'course__waypoint course__waypoint--' + w.kind" [attr.transform]="'translate(' + w.x + ' ' + w.y + ')'">
+        @if (w.kind === 'hydration') {
+          <circle class="course__waypoint-base" r="5" />
+          <path d="M0 -36 C-8 -26 -10 -21 -10 -17 A10 10 0 0 0 10 -17 C10 -21 8 -26 0 -36 Z" />
+        } @else {
+          <line y1="0" y2="-38" />
+          <path d="M0 -38 L22 -31 L0 -24 Z" />
+          <circle class="course__waypoint-base" r="5" />
+        }
+      </g>
+    }
+
+    <!-- Salida -->
+    <g class="course__end course__end--start" [attr.transform]="'translate(' + start().x + ' ' + start().y + ')'">
+      <circle class="course__pulse" r="12" />
+      <circle r="10" />
+      <circle class="course__dot" r="4" />
+      <text y="-22" text-anchor="middle">SALIDA</text>
+    </g>
+
+    <!-- Meta -->
+    <g class="course__end course__end--finish" [attr.transform]="'translate(' + finish().x + ' ' + finish().y + ')'">
+      <circle r="10" />
+      <circle class="course__dot" r="4" />
+      <text x="-12" y="-20" text-anchor="start">META</text>
+    </g>
+  </svg>
+
+  <!-- Leyenda HTML (legible en móvil, no depende del escalado del SVG) -->
+  <ul class="course__legend">
+    <li><span class="course__swatch course__swatch--start" aria-hidden="true"></span><strong>Salida:</strong> {{ course().start }}</li>
+    <li><span class="course__swatch course__swatch--finish" aria-hidden="true"></span><strong>Meta:</strong> {{ course().finish }}</li>
+    @for (w of waypoints(); track w.km) {
+      <li>
+        <span [class]="'course__swatch course__swatch--' + w.kind" aria-hidden="true"></span>
+        <strong>{{ w.label }}:</strong> km {{ w.courseKm }}
+      </li>
+    }
+    @if (startsMidRoad()) {
+      <li><span class="course__swatch course__swatch--road" aria-hidden="true"></span>Tramo Bolívar → La Peña (no incluido)</li>
+    }
+  </ul>
+
+  <!-- ─── Perfil altimétrico ─── -->
+  <div class="course__profile-head">
+    <span class="course__profile-title">PERFIL ALTIMÉTRICO</span>
+    <span class="course__profile-gain">D+ {{ summary().gain }} m</span>
+    <span class="course__profile-loss">D− {{ summary().loss }} m</span>
+    @if (!verified) {
+      <span class="course__badge" title="Pendiente del GPX oficial">REFERENCIAL</span>
+    }
+  </div>
+
+  <svg
+    class="course__profile"
+    viewBox="0 0 600 190"
+    role="img"
+    [attr.aria-labelledby]="uid() + '-prof-title ' + uid() + '-prof-desc'"
+  >
+    <title [attr.id]="uid() + '-prof-title'">Perfil altimétrico {{ course().distanceLabel }}</title>
+    <desc [attr.id]="uid() + '-prof-desc'">{{ profileDescription() }}</desc>
+
+    <defs>
+      <linearGradient [attr.id]="uid() + '-area'" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A855F7" stop-opacity="0.55" />
+        <stop offset="1" stop-color="#A855F7" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+
+    <!-- Rejilla Y (0 m = altura de la salida) -->
+    @for (t of yTicks(); track t.label) {
+      <line class="course__grid" [attr.x1]="profile.left" [attr.x2]="profile.right" [attr.y1]="t.pos" [attr.y2]="t.pos" />
+      <text class="course__axis" [attr.x]="profile.left - 10" [attr.y]="t.pos + 5" text-anchor="end">{{ t.label }}</text>
+    }
+    <line class="course__zero" [attr.x1]="profile.left" [attr.x2]="profile.right" [attr.y1]="zeroY()" [attr.y2]="zeroY()" />
+
+    <!-- Eje X: km 0 a la derecha (salida) -->
+    @for (t of xTicks(); track t.label) {
+      <text class="course__axis" [attr.x]="t.pos" [attr.y]="profile.bottom + 24" text-anchor="middle">{{ t.label }}</text>
+    }
+    <text class="course__axis course__axis--unit" [attr.x]="profile.right" [attr.y]="profile.bottom + 24" dx="16">km</text>
+
+    <path class="course__area" [attr.d]="profileArea()" [attr.fill]="'url(#' + uid() + '-area)'" />
+    <path class="course__line" [attr.d]="profileLine()" />
+
+    @for (w of profileWaypoints(); track w.km) {
+      <line [class]="'course__wp-line course__wp-line--' + w.kind" [attr.x1]="w.px" [attr.x2]="w.px" [attr.y1]="w.py" [attr.y2]="profile.bottom" />
+      <circle [class]="'course__wp-dot course__wp-dot--' + w.kind" [attr.cx]="w.px" [attr.cy]="w.py" r="6" />
+    }
+
+    <circle class="course__prof-start" [attr.cx]="profileEnds().start.x" [attr.cy]="profileEnds().start.y" r="7" />
+    <circle class="course__prof-finish" [attr.cx]="profileEnds().finish.x" [attr.cy]="profileEnds().finish.y" r="7" />
+    <text class="course__prof-label" [attr.x]="profileEnds().start.x" [attr.y]="profileEnds().start.y - 16" text-anchor="end">SALIDA</text>
+    <text class="course__prof-label" [attr.x]="profileEnds().finish.x" [attr.y]="profileEnds().finish.y - 16" text-anchor="start">META</text>
+  </svg>
+
+  <figcaption class="course__caption">
+    Vista desde el sur, no a escala: Bolívar a la derecha, Sucre a la izquierda.
+    @if (!verified) {
+      Perfil referencial; se actualizará con el GPX oficial.
+    }
+  </figcaption>
+</figure>

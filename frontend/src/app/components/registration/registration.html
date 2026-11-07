@@ -1,35 +1,37 @@
-<section class="registration" id="inscripcion">
+<section class="registration" id="inscripcion" aria-labelledby="registration-title">
   <div class="registration__container">
-    <h2 class="registration__title">INSCRIPCIÓN</h2>
+    <h2 class="registration__title" id="registration-title">INSCRIPCIÓN</h2>
     <p class="registration__subtitle">
       Completa el formulario y asegura tu cupo en la ¼ Maratón Bolívar - Sucre
     </p>
 
-    <!-- Success State -->
-    @if (submitSuccess) {
-      <div class="registration__success">
-        <div class="registration__success-icon">✅</div>
-        <h3 class="registration__success-title">¡Inscripción Exitosa!</h3>
-        <p class="registration__success-message">
-          Tu código de inscripción es:
-        </p>
-        <div class="registration__success-code">{{ registrationCode }}</div>
+    @if (status() === 'success') {
+      <!-- Success State -->
+      <div class="registration__success" role="status">
+        <div class="registration__success-icon" aria-hidden="true">✅</div>
+        <h3 class="registration__success-title" tabindex="-1">¡Inscripción Exitosa!</h3>
+        <p class="registration__success-message">Tu código de inscripción es:</p>
+        <div class="registration__success-code">{{ registrationCode() }}</div>
         <p class="registration__success-note">
           Guarda este código. Lo necesitarás para reclamar tu kit el día del evento.
         </p>
-        <button class="registration__success-btn" (click)="resetForm()">
+        <button type="button" class="registration__success-btn" (click)="resetForm()">
           Nueva Inscripción
         </button>
       </div>
     } @else {
-      <!-- Registration Form -->
       <form
         class="registration__form"
-        [formGroup]="registrationForm"
+        [formGroup]="form"
         (ngSubmit)="onSubmit()"
+        [attr.aria-busy]="isSubmitting()"
         novalidate
       >
-        <!-- Honeypot (campo trampa para bots — oculto) -->
+        <p class="registration__legend-note">
+          Los campos marcados con <span class="registration__required" aria-hidden="true">*</span> son obligatorios.
+        </p>
+
+        <!-- Honeypot (campo trampa para bots, oculto) -->
         <div class="registration__honeypot" aria-hidden="true">
           <label for="website">Website</label>
           <input type="text" id="website" formControlName="website" tabindex="-1" autocomplete="off">
@@ -39,7 +41,7 @@
           <!-- Nombre -->
           <div class="registration__field">
             <label class="registration__label" for="nombre">
-              Nombre <span class="registration__required">*</span>
+              Nombre <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <input
               type="text"
@@ -47,18 +49,21 @@
               class="registration__input"
               formControlName="nombre"
               placeholder="Tu nombre"
-              [class.registration__input--error]="hasError('nombre')"
               autocomplete="given-name"
+              required
+              [class.registration__input--error]="hasError('nombre')"
+              [attr.aria-invalid]="hasError('nombre')"
+              [attr.aria-describedby]="hasError('nombre') ? 'nombre-error' : null"
             >
             @if (hasError('nombre')) {
-              <span class="registration__error">{{ getErrorMessage('nombre') }}</span>
+              <span class="registration__error" id="nombre-error">{{ getErrorMessage('nombre') }}</span>
             }
           </div>
 
           <!-- Apellidos -->
           <div class="registration__field">
             <label class="registration__label" for="apellidos">
-              Apellidos <span class="registration__required">*</span>
+              Apellidos <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <input
               type="text"
@@ -66,41 +71,48 @@
               class="registration__input"
               formControlName="apellidos"
               placeholder="Tus apellidos"
-              [class.registration__input--error]="hasError('apellidos')"
               autocomplete="family-name"
+              required
+              [class.registration__input--error]="hasError('apellidos')"
+              [attr.aria-invalid]="hasError('apellidos')"
+              [attr.aria-describedby]="hasError('apellidos') ? 'apellidos-error' : null"
             >
             @if (hasError('apellidos')) {
-              <span class="registration__error">{{ getErrorMessage('apellidos') }}</span>
+              <span class="registration__error" id="apellidos-error">{{ getErrorMessage('apellidos') }}</span>
             }
           </div>
 
           <!-- Fecha de Nacimiento -->
           <div class="registration__field">
             <label class="registration__label" for="fecha_nacimiento">
-              Fecha de Nacimiento <span class="registration__required">*</span>
+              Fecha de Nacimiento <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <input
               type="date"
               id="fecha_nacimiento"
               class="registration__input"
               formControlName="fecha_nacimiento"
-              [class.registration__input--error]="hasError('fecha_nacimiento')"
               autocomplete="bday"
+              min="1926-01-01"
+              max="2026-12-31"
+              required
+              [class.registration__input--error]="hasError('fecha_nacimiento')"
+              [attr.aria-invalid]="hasError('fecha_nacimiento')"
+              aria-describedby="fecha_nacimiento-msg"
             >
-            @if (hasError('fecha_nacimiento')) {
-              <span class="registration__error">{{ getErrorMessage('fecha_nacimiento') }}</span>
-            }
-            @if (calculatedAge !== null && !hasError('fecha_nacimiento')) {
-              <span class="registration__hint">
-                Tendrás {{ calculatedAge }} años al día del evento
-              </span>
-            }
+            <span id="fecha_nacimiento-msg" aria-live="polite">
+              @if (hasError('fecha_nacimiento')) {
+                <span class="registration__error">{{ getErrorMessage('fecha_nacimiento') }}</span>
+              } @else if (calculatedAge() !== null) {
+                <span class="registration__hint">Tendrás {{ calculatedAge() }} años al día del evento</span>
+              }
+            </span>
           </div>
 
           <!-- Correo Electrónico -->
           <div class="registration__field">
             <label class="registration__label" for="correo">
-              Correo Electrónico <span class="registration__required">*</span>
+              Correo Electrónico <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <input
               type="email"
@@ -108,41 +120,50 @@
               class="registration__input"
               formControlName="correo"
               placeholder="correo@ejemplo.com"
-              [class.registration__input--error]="hasError('correo')"
               autocomplete="email"
+              inputmode="email"
+              required
+              [class.registration__input--error]="hasError('correo')"
+              [attr.aria-invalid]="hasError('correo')"
+              [attr.aria-describedby]="hasError('correo') ? 'correo-error' : null"
             >
             @if (hasError('correo')) {
-              <span class="registration__error">{{ getErrorMessage('correo') }}</span>
+              <span class="registration__error" id="correo-error">{{ getErrorMessage('correo') }}</span>
             }
           </div>
 
           <!-- Celular -->
           <div class="registration__field">
             <label class="registration__label" for="celular">
-              Celular <span class="registration__required">*</span>
+              Celular <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <div class="registration__phone-wrapper">
-              <span class="registration__phone-prefix">+57</span>
+              <span class="registration__phone-prefix" aria-hidden="true">+57</span>
               <input
                 type="tel"
                 id="celular"
                 class="registration__input registration__input--phone"
                 formControlName="celular"
                 placeholder="3001234567"
-                [class.registration__input--error]="hasError('celular')"
                 autocomplete="tel-national"
+                inputmode="numeric"
                 maxlength="10"
+                required
+                [class.registration__input--error]="hasError('celular')"
+                [attr.aria-invalid]="hasError('celular')"
+                [attr.aria-describedby]="hasError('celular') ? 'celular-error' : 'celular-hint'"
               >
             </div>
+            <span class="registration__sr-only" id="celular-hint">Número colombiano de 10 dígitos, indicativo +57</span>
             @if (hasError('celular')) {
-              <span class="registration__error">{{ getErrorMessage('celular') }}</span>
+              <span class="registration__error" id="celular-error">{{ getErrorMessage('celular') }}</span>
             }
           </div>
 
           <!-- Ciudad / Municipio -->
           <div class="registration__field">
             <label class="registration__label" for="ciudad_municipio">
-              Ciudad / Municipio <span class="registration__required">*</span>
+              Ciudad / Municipio <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <input
               type="text"
@@ -150,72 +171,87 @@
               class="registration__input"
               formControlName="ciudad_municipio"
               placeholder="¿De dónde vienes?"
+              autocomplete="address-level2"
+              required
               [class.registration__input--error]="hasError('ciudad_municipio')"
+              [attr.aria-invalid]="hasError('ciudad_municipio')"
+              [attr.aria-describedby]="hasError('ciudad_municipio') ? 'ciudad-error' : null"
             >
             @if (hasError('ciudad_municipio')) {
-              <span class="registration__error">{{ getErrorMessage('ciudad_municipio') }}</span>
+              <span class="registration__error" id="ciudad-error">{{ getErrorMessage('ciudad_municipio') }}</span>
             }
           </div>
 
           <!-- Género -->
-          <div class="registration__field">
-            <label class="registration__label">
-              Género <span class="registration__required">*</span>
-            </label>
+          <fieldset
+            class="registration__field registration__fieldset"
+            [attr.aria-describedby]="hasError('genero') ? 'genero-error' : null"
+          >
+            <legend class="registration__label">
+              Género <span class="registration__required" aria-hidden="true">*</span>
+            </legend>
             <div class="registration__radio-group">
               @for (option of genderOptions; track option.value) {
                 <label class="registration__radio-label">
                   <input
                     type="radio"
+                    name="genero"
                     formControlName="genero"
                     [value]="option.value"
                     class="registration__radio"
+                    required
                   >
-                  <span class="registration__radio-custom"></span>
+                  <span class="registration__radio-custom" aria-hidden="true"></span>
                   {{ option.label }}
                 </label>
               }
             </div>
             @if (hasError('genero')) {
-              <span class="registration__error">{{ getErrorMessage('genero') }}</span>
+              <span class="registration__error" id="genero-error">{{ getErrorMessage('genero') }}</span>
             }
-          </div>
+          </fieldset>
 
           <!-- Categoría -->
           <div class="registration__field">
             <label class="registration__label" for="categoria">
-              Categoría <span class="registration__required">*</span>
+              Categoría <span class="registration__required" aria-hidden="true">*</span>
             </label>
             <select
               id="categoria"
               class="registration__input registration__input--select"
               formControlName="categoria"
-              [class.registration__input--error]="hasError('categoria')"
+              required
+              [class.registration__input--error]="hasError('categoria') || !!categoryAgeError"
+              [attr.aria-invalid]="hasError('categoria') || !!categoryAgeError"
+              aria-describedby="categoria-msg"
             >
               <option value="" disabled>Selecciona tu categoría</option>
               @for (cat of categoryOptions; track cat.value) {
                 <option [value]="cat.value">{{ cat.label }}</option>
               }
             </select>
-            @if (hasError('categoria')) {
-              <span class="registration__error">{{ getErrorMessage('categoria') }}</span>
-            }
-            @if (is6kRace) {
-              <span class="registration__hint registration__hint--success">
-                🏅 ¡Esta categoría es gratuita! Todos reciben medalla.
-              </span>
-            }
+            <span id="categoria-msg" aria-live="polite">
+              @if (hasError('categoria')) {
+                <span class="registration__error">{{ getErrorMessage('categoria') }}</span>
+              } @else if (categoryAgeError) {
+                <span class="registration__error">{{ categoryAgeError }}</span>
+              } @else if (isFreeRace()) {
+                <span class="registration__hint registration__hint--success">
+                  🏅 ¡Esta categoría es gratuita! Todos reciben medalla.
+                </span>
+              }
+            </span>
           </div>
         </div>
 
         <!-- Valor de inscripción -->
-        <div class="registration__price-banner">
-          @if (is6kRace) {
+        <div class="registration__price-banner" aria-live="polite">
+          @if (isFreeRace()) {
             <span class="registration__price-label">Inscripción:</span>
             <span class="registration__price-amount registration__price-amount--free">GRATIS</span>
           } @else {
             <span class="registration__price-label">Valor de inscripción:</span>
-            <span class="registration__price-amount">$30.000 COP</span>
+            <span class="registration__price-amount">{{ feeLabel }}</span>
           }
         </div>
 
@@ -226,36 +262,37 @@
               type="checkbox"
               formControlName="terminos"
               class="registration__checkbox"
+              required
+              [attr.aria-invalid]="hasError('terminos')"
+              [attr.aria-describedby]="hasError('terminos') ? 'terminos-error' : null"
             >
-            <span class="registration__checkbox-custom"></span>
-            Acepto los <a href="#" class="registration__terms-link">términos y condiciones</a>
-            y el <a href="#" class="registration__terms-link">deslinde de responsabilidad</a>
-            <span class="registration__required">*</span>
+            <span class="registration__checkbox-custom" aria-hidden="true"></span>
+            <span>
+              Acepto los <a href="#" class="registration__terms-link">términos y condiciones</a>
+              y el <a href="#" class="registration__terms-link">deslinde de responsabilidad</a>
+              <span class="registration__required" aria-hidden="true">*</span>
+            </span>
           </label>
           @if (hasError('terminos')) {
-            <span class="registration__error">Debes aceptar los términos y condiciones</span>
+            <span class="registration__error" id="terminos-error">{{ getErrorMessage('terminos') }}</span>
           }
         </div>
 
         <!-- Error global -->
-        @if (submitError) {
-          <div class="registration__global-error">
-            <span>⚠️</span> {{ submitError }}
+        @if (status() === 'error' && submitError()) {
+          <div class="registration__global-error" role="alert">
+            <span aria-hidden="true">⚠️</span> {{ submitError() }}
           </div>
         }
 
         <!-- Submit -->
         <div class="registration__submit-wrapper">
-          <button
-            type="submit"
-            class="registration__submit"
-            [disabled]="isSubmitting"
-          >
-            @if (isSubmitting) {
-              <span class="registration__spinner"></span>
+          <button type="submit" class="registration__submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="registration__spinner" aria-hidden="true"></span>
               Procesando...
             } @else {
-              🏃 ¡INSCRIBIRME AHORA!
+              <span aria-hidden="true">🏃</span> ¡INSCRIBIRME AHORA!
             }
           </button>
         </div>

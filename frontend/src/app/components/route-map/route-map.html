@@ -1,73 +1,84 @@
-<section class="circuits" id="ruta">
+<section class="circuits" id="ruta" aria-labelledby="circuits-heading">
   <div class="circuits__container">
     <span class="circuits__tagline">RECORRIDOS</span>
-    <h2 class="circuits__heading">CIRCUITOS OFICIALES</h2>
+    <h2 class="circuits__heading" id="circuits-heading">CIRCUITOS OFICIALES</h2>
 
-    <!-- Circuit Cards (Sogamoso-style) -->
     <div class="circuits__grid">
-      @for (c of circuits; track c.distance) {
-      <div class="circuits__card">
-        <!-- Top Row: Distance & Badge -->
-        <div class="circuits__header">
-          <span class="circuits__number">{{ c.distance }}</span>
-          <span class="circuits__pill">{{ c.tag }}</span>
-        </div>
-
-        <!-- Circuit Title -->
-        <h3 class="circuits__name">{{ c.circuitTitle }}</h3>
-
-        <!-- Circuit Description -->
-        <p class="circuits__desc">{{ c.description }}</p>
-
-        <!-- Circuit Map Graphic -->
-        <div class="circuits__map-box">
-          <img [src]="c.circuitImg" [alt]="c.circuitTitle" class="circuits__map-img" loading="lazy">
-        </div>
-
-        <!-- Stats 3-column row (like MMS) -->
-        <div class="circuits__stats">
-          <div class="circuits__stat-col">
-            <span class="circuits__stat-label">{{ c.stat1Label }}</span>
-            <span class="circuits__stat-val">{{ c.stat1Value }}</span>
+      @for (c of courses; track c.id) {
+        <article class="circuits__card" [attr.aria-labelledby]="'circuit-' + c.id">
+          <div class="circuits__header">
+            <span class="circuits__number">{{ c.distanceLabel }}</span>
+            <span class="circuits__pill">{{ c.tag }}</span>
           </div>
-          <div class="circuits__stat-col">
-            <span class="circuits__stat-label">{{ c.stat2Label }}</span>
-            <span class="circuits__stat-val">{{ c.stat2Value }}</span>
-          </div>
-          <div class="circuits__stat-col">
-            <span class="circuits__stat-label">{{ c.stat3Label }}</span>
-            <span class="circuits__stat-val">{{ c.stat3Value }}</span>
-          </div>
-        </div>
 
-        <!-- CTA Button -->
-        <button type="button" class="circuits__cta" (click)="selectCircuit(c.categoryCode)">
-          INSCRIBIRME EN {{ c.distance }}
-        </button>
-      </div>
+          <h3 class="circuits__name" [id]="'circuit-' + c.id">{{ c.title }}</h3>
+          <p class="circuits__desc">{{ c.description }}</p>
+
+          <app-course-diagram class="circuits__diagram" [course]="c" />
+
+          <dl class="circuits__stats">
+            @for (s of c.stats; track s.label) {
+              <div class="circuits__stat-col">
+                <dt class="circuits__stat-label">{{ s.label }}</dt>
+                <dd class="circuits__stat-val">{{ s.value }}</dd>
+              </div>
+            }
+          </dl>
+
+          <div class="circuits__actions">
+            <button type="button" class="circuits__cta" (click)="selectCircuit(c.categoryCode)">
+              INSCRIBIRME EN {{ c.distanceLabel }}
+            </button>
+            <a
+              class="circuits__link"
+              [href]="directionsUrl(c)"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Abrir ruta en Google Maps<span class="circuits__sr-only"> (se abre en una pestaña nueva)</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </article>
       }
     </div>
 
-    <!-- Aerial Course Flyover Video & Google Map -->
-    <div class="circuits__media-wrapper">
-      <div class="circuits__media-card">
-        <h3 class="circuits__media-title">🎥 VISTA AÉREA DEL TRAYECTO (IA FLOW)</h3>
-        <p class="circuits__media-sub">Sobrevolando la vía entre Bolívar y Sucre, Santander</p>
-        <div class="circuits__video-container">
-          <video class="circuits__video" controls playsinline poster="assets/images/route-poster.jpg">
-            <source src="assets/videos/ruta-recorrido.mp4" type="video/mp4">
-            <p>Tu navegador no soporta reproducción de video.</p>
-          </video>
+    <div class="circuits__media-wrapper" [class.circuits__media-wrapper--single]="!routeVideo">
+      @if (routeVideo) {
+        <div class="circuits__media-card">
+          <h3 class="circuits__media-title">VISTA AÉREA DEL TRAYECTO</h3>
+          <p class="circuits__media-sub">Sobrevolando la vía entre Bolívar y Sucre, Santander</p>
+          <div class="circuits__video-container">
+            <video class="circuits__video" controls playsinline preload="none" [poster]="routeVideo.poster">
+              <source [src]="routeVideo.src" type="video/mp4">
+            </video>
+          </div>
         </div>
-      </div>
+      }
 
       <div class="circuits__media-card">
-        <h3 class="circuits__media-title">📍 MAPA SATELITAL EN VIVO</h3>
-        <p class="circuits__media-sub">Ruta oficial y puntos de control</p>
+        <h3 class="circuits__media-title">MAPA DE LA RUTA</h3>
+        <p class="circuits__media-sub">Bolívar → Sucre, Santander · vista interactiva</p>
         <div class="circuits__map-container">
-          <iframe [src]="safeMapUrl" width="100%" height="340" style="border:0; border-radius: 16px;" allowfullscreen
-            loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa del Trazado Bolívar - Sucre">
-          </iframe>
+          @if (mapLoaded()) {
+            <iframe
+              class="circuits__map-frame"
+              [src]="mapEmbedUrl"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Mapa interactivo de la ruta Bolívar - Sucre"
+            ></iframe>
+          } @else {
+            <button type="button" class="circuits__map-facade" (click)="loadMap()">
+              <svg class="circuits__map-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" />
+                <path d="M9 4v14M15 6v14" />
+              </svg>
+              <span class="circuits__map-facade-title">Cargar mapa interactivo</span>
+              <span class="circuits__map-facade-note">Se cargará contenido de Google Maps</span>
+            </button>
+          }
         </div>
       </div>
     </div>

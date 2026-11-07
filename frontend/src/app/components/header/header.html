@@ -2,7 +2,17 @@
   <div class="header__container">
     <!-- Brand / Logo -->
     <a href="#inicio" class="header__brand" (click)="closeMobileMenu()">
-      <img src="assets/images/logo_maraton.png" alt="Logo ¼ Maratón Bolívar - Sucre" class="header__logo">
+      <picture>
+        <source type="image/webp" srcset="assets/images/logo_maraton-96.webp 1x, assets/images/logo_maraton-192.webp 2x">
+        <img
+          src="assets/images/logo_maraton-192.png"
+          alt="Logo ¼ Maratón Bolívar - Sucre"
+          class="header__logo"
+          width="48"
+          height="48"
+          decoding="async"
+        >
+      </picture>
       <div class="header__brand-text">
         <span class="header__brand-title">¼ MARATÓN</span>
         <span class="header__brand-sub">BOLÍVAR · SUCRE</span>

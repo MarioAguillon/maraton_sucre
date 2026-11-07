@@ -1,0 +1,119 @@
+@use '../../../styles/variables' as *;
+
+$wa-green: #25D366; // verde oficial de WhatsApp
+$wa-green-dark: #128C7E;
+
+:host {
+  position: fixed;
+  right: calc(clamp(16px, 3vw, 28px) + env(safe-area-inset-right, 0px));
+  bottom: calc(clamp(16px, 3vw, 28px) + env(safe-area-inset-bottom, 0px));
+  z-index: 900;
+}
+
+.fab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: $wa-green;
+  color: $white;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba($purple-dark, 0.6);
+  transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    color: $white;
+    background: #1EBE5A;
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 12px 30px rgba($wa-green, 0.45), 0 0 0 2px rgba($purple-dark, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $white;
+    outline-offset: 4px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    width: 54px;
+    height: 54px;
+  }
+
+  &__icon {
+    position: relative;
+    z-index: 1;
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+  }
+
+  // Halo pulsante suave
+  &__pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: $wa-green;
+    animation: fabPulse 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  }
+
+  // Etiqueta que aparece al pasar el ratón / enfocar (solo pantallas amplias)
+  &__label {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    padding: 8px 14px;
+    border-radius: 50px;
+    background: $white;
+    color: $wa-green-dark;
+    font-family: $font-heading;
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(8px, -50%);
+    transition: opacity $transition-fast, transform $transition-fast;
+
+    @media (max-width: $breakpoint-md) {
+      display: none;
+    }
+  }
+
+  &:hover &__label,
+  &:focus-visible &__label {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &__pulse {
+      animation: none;
+      opacity: 0;
+    }
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+@keyframes fabPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  70%,
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}

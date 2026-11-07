@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL, CategoryCode } from '../config/event.config';
 
 export interface RegistrationData {
   nombre: string;
@@ -10,8 +11,9 @@ export interface RegistrationData {
   celular: string;
   ciudad_municipio: string;
   genero: string;
-  categoria: string;
+  categoria: CategoryCode | '';
   website?: string;
+  terminos: boolean;
 }
 
 export interface RegistrationResponse {
@@ -28,6 +30,12 @@ export interface RegistrationResponse {
   };
 }
 
+export interface ValidationErrorResponse {
+  success: false;
+  message: string;
+  errors?: { campo: string; mensaje: string }[];
+}
+
 export interface StatsResponse {
   success: boolean;
   data: {
@@ -40,9 +48,8 @@ export interface StatsResponse {
 
 @Injectable({ providedIn: 'root' })
 export class RegistrationService {
-  private apiUrl = 'http://localhost:3000/api/inscripciones';
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${API_BASE_URL}/inscripciones`;
 
   register(data: RegistrationData): Observable<RegistrationResponse> {
     return this.http.post<RegistrationResponse>(this.apiUrl, data);

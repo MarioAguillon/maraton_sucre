@@ -1,0 +1,275 @@
+@use '../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.course {
+  margin: 0;
+  padding: clamp(12px, 2.5vw, 18px);
+  background: rgba($purple-dark, 0.95);
+  border: 1px solid rgba($purple-accent, 0.25);
+  border-radius: 20px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  text {
+    font-family: $font-heading;
+  }
+
+  // ─── Mapa ───────────────────────────────────────
+  &__north {
+    circle { fill: rgba($white, 0.04); stroke: rgba($white, 0.25); }
+    path { fill: $white; }
+    text { fill: $gray-subtle; font-size: 15px; font-weight: 800; }
+  }
+
+  &__direction {
+    fill: rgba($white, 0.55);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+  }
+
+  &__road {
+    fill: none;
+    stroke: rgba($white, 0.16);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 2 9;
+  }
+
+  &__road-end {
+    fill: rgba($white, 0.3);
+  }
+
+  &__town {
+    fill: $white-dim;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+  }
+
+  &__route-shadow {
+    fill: none;
+    stroke: rgba($purple-accent, 0.35);
+    stroke-width: 18;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: blur(6px);
+  }
+
+  &__route {
+    fill: none;
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &__km {
+    circle { fill: $purple-dark; stroke: rgba($white, 0.85); stroke-width: 2; }
+    text { fill: $white; font-size: 14px; font-weight: 800; }
+  }
+
+  &__waypoint {
+    path { fill: $blue-accent; stroke: $purple-dark; stroke-width: 2; }
+
+    &--start-6k {
+      path { fill: $white; }
+      line { stroke: $white; stroke-width: 2.5; }
+    }
+  }
+
+  &__waypoint-base {
+    fill: $blue-accent;
+  }
+
+  &__end {
+    circle { stroke: $white; stroke-width: 2; }
+    text { font-size: 18px; font-weight: 900; letter-spacing: 0.08em; }
+
+    &--start {
+      circle { fill: $red-cta; }
+      text { fill: $white; }
+    }
+
+    &--finish {
+      circle { fill: $green-accent; }
+      text { fill: $green-accent; }
+    }
+  }
+
+  &__dot {
+    fill: $white !important;
+    stroke: none !important;
+  }
+
+  &__pulse {
+    fill: none !important;
+    stroke: $red-cta !important;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: coursePulse 2.2s ease-out infinite;
+  }
+
+  // ─── Leyenda ────────────────────────────────────
+  &__legend {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 12px 4px 18px;
+    padding: 0;
+    font-size: 0.82rem;
+    color: $white-dim;
+
+    li { display: inline-flex; align-items: center; gap: 8px; }
+    strong { color: $white; font-weight: 700; }
+  }
+
+  &__swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid $white;
+
+    &--start { background: $red-cta; }
+    &--finish { background: $green-accent; }
+    &--hydration { background: $blue-accent; border-color: $purple-dark; }
+    &--start-6k { background: $white; border-radius: 2px; }
+    &--road { background: transparent; border: 2px dashed rgba($white, 0.45); }
+  }
+
+  // ─── Perfil ─────────────────────────────────────
+  &__profile-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 14px 4px 4px;
+    border-top: 1px solid rgba($white, 0.08);
+  }
+
+  &__profile-title {
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: $gray-subtle;
+  }
+
+  &__profile-gain {
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #C9A2FF; // morado aclarado para AA sobre fondo oscuro
+  }
+
+  &__profile-loss {
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: $blue-accent;
+  }
+
+  &__badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    border-radius: 50px;
+    border: 1px solid rgba($white, 0.25);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: $white-dim;
+  }
+
+  &__grid {
+    stroke: rgba($white, 0.08);
+    stroke-dasharray: 4 6;
+  }
+
+  &__axis {
+    fill: $gray-subtle;
+    font-size: 15px;
+    font-weight: 600;
+
+    &--unit { text-anchor: start; }
+  }
+
+  &__line {
+    fill: none;
+    stroke: #C9A2FF;
+    stroke-width: 3.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  &__zero {
+    stroke: rgba($white, 0.3);
+    stroke-width: 1.5;
+  }
+
+  &__wp-line {
+    stroke: $blue-accent;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 4;
+
+    &--start-6k { stroke: $white; }
+  }
+
+  &__wp-dot {
+    fill: $blue-accent;
+    stroke: $purple-dark;
+    stroke-width: 2;
+
+    &--start-6k { fill: $white; }
+  }
+  &__prof-start { fill: $red-cta; stroke: $white; stroke-width: 2; }
+  &__prof-finish { fill: $green-accent; stroke: $white; stroke-width: 2; }
+
+  &__prof-label {
+    fill: $white;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  &__caption {
+    margin: 10px 4px 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: $gray-subtle;
+  }
+}
+
+// Dibujo progresivo del trazado al entrar en pantalla (solo navegadores con scroll-timeline).
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .course__route {
+      stroke-dasharray: 1;
+      animation: courseDraw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 45%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course__pulse { animation: none; }
+}
+
+@keyframes courseDraw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes coursePulse {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(2.4); opacity: 0; }
+}

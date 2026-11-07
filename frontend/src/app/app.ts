@@ -8,6 +8,7 @@ import { About } from './components/about/about';
 import { Registration } from './components/registration/registration';
 import { Sponsors } from './components/sponsors/sponsors';
 import { Footer } from './components/footer/footer';
+import { WhatsappFab } from './components/whatsapp-fab/whatsapp-fab';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ import { Footer } from './components/footer/footer';
     Registration,
     Sponsors,
     Footer,
+    WhatsappFab,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

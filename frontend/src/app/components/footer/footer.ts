@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { CONTACT, DEVELOPER, SOCIAL } from '../../config/contact.config';
+import { FACEBOOK_ICON_PATH, WHATSAPP_ICON_PATH } from '../../shared/brand-icons';
 
 @Component({
   imports: [],
@@ -7,16 +9,13 @@ import { Component } from '@angular/core';
   templateUrl: './footer.html',
 })
 export class Footer {
-  currentYear = new Date().getFullYear();
+  readonly currentYear = new Date().getFullYear();
+  readonly contact = CONTACT;
+  readonly social = SOCIAL;
+  readonly developer = DEVELOPER;
+  readonly icons = { whatsapp: WHATSAPP_ICON_PATH, facebook: FACEBOOK_ICON_PATH };
 
-  socialLinks = [
-    { name: 'Instagram', icon: '📷', url: '#' },
-    { name: 'Facebook', icon: '📘', url: '#' },
-    { name: 'WhatsApp', icon: '📱', url: '#' },
-    { name: 'TikTok', icon: '🎵', url: '#' },
-  ];
-
-  quickLinks = [
+  readonly quickLinks = [
     { label: 'Inicio', href: '#inicio' },
     { label: 'Distancias', href: '#categorias' },
     { label: 'Ruta', href: '#ruta' },

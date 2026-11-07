@@ -1,191 +1,237 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import {
+  Component,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import {
+  CATEGORY_OPTIONS,
+  CategoryCode,
+  REGISTRATION_FEE_LABEL,
+  ageOnEventDay,
+  findCategory,
+} from '../../config/event.config';
+import {
+  RegistrationData,
+  RegistrationService,
+  ValidationErrorResponse,
+} from '../../services/registration';
+import { RegistrationState } from '../../services/registration-state';
+
+type FieldName = keyof Registration['form']['controls'];
+type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error';
+
+const NAME_PATTERN = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+const CITY_PATTERN = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-.]+$/;
+const MIN_AGE_ANY_CATEGORY = Math.min(...CATEGORY_OPTIONS.map((c) => c.minAge));
+const MAX_AGE = 100;
+
+/** Fecha válida, no futura y con la edad mínima de alguna categoría. */
+const birthDateValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const age = ageOnEventDay(control.value);
+  if (control.value && age === null) return { invalidDate: true };
+  if (age === null) return null;
+  if (age > MAX_AGE || age < 0) return { invalidDate: true };
+  if (age < MIN_AGE_ANY_CATEGORY) return { minAge: { required: MIN_AGE_ANY_CATEGORY, actual: age } };
+  return null;
+};
+
+/** Validador de grupo: la edad debe cumplir el mínimo de la categoría elegida. */
+const categoryAgeValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+  const age = ageOnEventDay(group.get('fecha_nacimiento')?.value);
+  const category = findCategory(group.get('categoria')?.value);
+  if (age === null || !category) return null;
+  return age < category.minAge
+    ? { categoryAge: { required: category.minAge, actual: age, label: category.label } }
+    : null;
+};
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   selector: 'app-registration',
   styleUrl: './registration.scss',
   templateUrl: './registration.html',
 })
 export class Registration {
-  registrationForm: FormGroup;
-  isSubmitting = false;
-  submitSuccess = false;
-  submitError = '';
-  registrationCode = '';
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly api = inject(RegistrationService);
+  private readonly state = inject(RegistrationState);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
 
-  genderOptions = [
+  readonly genderOptions = [
     { value: 'masculino', label: 'Masculino' },
     { value: 'femenino', label: 'Femenino' },
-  ];
+  ] as const;
+  readonly categoryOptions = CATEGORY_OPTIONS;
+  readonly feeLabel = REGISTRATION_FEE_LABEL;
 
-  categoryOptions = [
-    { value: 'elite_18', label: 'Elite 18+', minAge: 18, race: 'cuarto' },
-    { value: 'elite_45', label: 'Elite 45+', minAge: 45, race: 'cuarto' },
-    { value: 'recreativa_18', label: 'Recreativa 18+', minAge: 18, race: 'cuarto' },
-    { value: 'recreativa_45', label: 'Recreativa 45+', minAge: 45, race: 'cuarto' },
-    { value: '6k_abierta', label: '6K La Peña - Sucre (Gratis)', minAge: 0, race: '6k' },
-  ];
-
-  private apiUrl = 'http://localhost:3000/api/inscripciones';
-
-  constructor(private fb: FormBuilder, private http: HttpClient) {
-    this.registrationForm = this.fb.group({
-      nombre: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(100),
-        Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/),
-      ]],
-      apellidos: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(100),
-        Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/),
-      ]],
-      fecha_nacimiento: ['', [
-        Validators.required,
-        this.minAgeValidator(18),
-      ]],
-      correo: ['', [
-        Validators.required,
-        Validators.email,
-        Validators.maxLength(150),
-      ]],
-      celular: ['', [
-        Validators.required,
-        Validators.pattern(/^3\d{9}$/),
-      ]],
-      ciudad_municipio: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(100),
-      ]],
+  readonly form = this.fb.group(
+    {
+      nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern(NAME_PATTERN)]],
+      apellidos: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern(NAME_PATTERN)]],
+      fecha_nacimiento: ['', [Validators.required, birthDateValidator]],
+      correo: ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
+      celular: ['', [Validators.required, Validators.pattern(/^3\d{9}$/)]],
+      ciudad_municipio: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern(CITY_PATTERN)]],
       genero: ['', Validators.required],
-      categoria: ['', Validators.required],
-      // Honeypot — campo trampa para bots (oculto con CSS)
+      categoria: ['' as CategoryCode | '', Validators.required],
+      /** Honeypot: campo trampa para bots (oculto con CSS). */
       website: [''],
-      // Aceptación de términos
       terminos: [false, Validators.requiredTrue],
+    },
+    { validators: categoryAgeValidator },
+  );
+
+  // ─── Estado reactivo (signals: compatible con zoneless) ─────────────
+  readonly status = signal<SubmitStatus>('idle');
+  readonly submitError = signal('');
+  readonly registrationCode = signal('');
+  readonly isSubmitting = computed(() => this.status() === 'submitting');
+
+  private readonly formValue = toSignal(this.form.valueChanges, {
+    initialValue: this.form.getRawValue(),
+  });
+  readonly calculatedAge = computed(() => ageOnEventDay(this.formValue().fecha_nacimiento));
+  readonly selectedCategory = computed(() => findCategory(this.formValue().categoria));
+  readonly isFreeRace = computed(() => this.selectedCategory()?.free ?? false);
+
+  constructor() {
+    // Preselección desde las tarjetas de distancias / circuitos.
+    effect(() => {
+      const code = this.state.preselectedCategory();
+      if (!code) return;
+      const control = this.form.controls.categoria;
+      control.setValue(code);
+      control.markAsDirty();
+      this.state.preselectedCategory.set(null);
     });
   }
 
-  /**
-   * Validador: edad mínima al día del evento (9 Enero 2027).
-   */
-  private minAgeValidator(minAge: number) {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) return null;
-      const birthDate = new Date(control.value);
-      const eventDate = new Date('2027-01-09');
-      let age = eventDate.getFullYear() - birthDate.getFullYear();
-      const m = eventDate.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && eventDate.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age >= minAge ? null : { minAge: { required: minAge, actual: age } };
-    };
+  hasError(field: FieldName): boolean {
+    const control = this.form.controls[field];
+    return control.invalid && (control.dirty || control.touched);
   }
 
-  /**
-   * Calcula la edad al momento del evento para mostrar la categoría sugerida.
-   */
-  get calculatedAge(): number | null {
-    const dob = this.registrationForm.get('fecha_nacimiento')?.value;
-    if (!dob) return null;
-    const birthDate = new Date(dob);
-    const eventDate = new Date('2027-01-09');
-    let age = eventDate.getFullYear() - birthDate.getFullYear();
-    const m = eventDate.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && eventDate.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
+  /** Error cruzado edad ↔ categoría (se muestra bajo "Categoría"). */
+  get categoryAgeError(): string {
+    const err = this.form.errors?.['categoryAge'];
+    const touched = this.form.controls.categoria.dirty || this.form.controls.categoria.touched;
+    if (!err || !touched) return '';
+    return `${err.label} exige ${err.required} años o más al día del evento (tendrás ${err.actual}).`;
   }
 
-  /**
-   * Retorna true si el campo tiene error y fue tocado.
-   */
-  hasError(field: string): boolean {
-    const control = this.registrationForm.get(field);
-    return !!(control && control.invalid && (control.dirty || control.touched));
-  }
-
-  /**
-   * Retorna el mensaje de error para un campo.
-   */
-  getErrorMessage(field: string): string {
-    const control = this.registrationForm.get(field);
-    if (!control || !control.errors) return '';
-
-    if (control.errors['required']) return 'Este campo es obligatorio';
-    if (control.errors['minlength']) return `Mínimo ${control.errors['minlength'].requiredLength} caracteres`;
-    if (control.errors['maxlength']) return `Máximo ${control.errors['maxlength'].requiredLength} caracteres`;
-    if (control.errors['email']) return 'Correo electrónico inválido';
-    if (control.errors['pattern']) {
+  getErrorMessage(field: FieldName): string {
+    const errors = this.form.controls[field].errors;
+    if (!errors) return '';
+    if (errors['server']) return errors['server'];
+    if (errors['required']) return field === 'terminos' ? 'Debes aceptar los términos y condiciones' : 'Este campo es obligatorio';
+    if (errors['minlength']) return `Mínimo ${errors['minlength'].requiredLength} caracteres`;
+    if (errors['maxlength']) return `Máximo ${errors['maxlength'].requiredLength} caracteres`;
+    if (errors['email']) return 'Correo electrónico inválido';
+    if (errors['invalidDate']) return 'Fecha de nacimiento inválida';
+    if (errors['minAge']) return `Debes tener al menos ${errors['minAge'].required} años al día del evento`;
+    if (errors['pattern']) {
       if (field === 'celular') return 'Número colombiano inválido (10 dígitos, inicia con 3)';
-      return 'Formato inválido — solo se permiten letras';
+      if (field === 'ciudad_municipio') return 'Solo letras, espacios, guiones y puntos';
+      return 'Formato inválido: solo se permiten letras';
     }
-    if (control.errors['minAge']) return `Debes tener al menos ${control.errors['minAge'].required} años al día del evento`;
     return 'Campo inválido';
   }
 
-  /**
-   * Determina si la categoría seleccionada es la 6K (gratis).
-   */
-  get is6kRace(): boolean {
-    return this.registrationForm.get('categoria')?.value === '6k_abierta';
-  }
-
-  /**
-   * Envía el formulario al backend.
-   */
   onSubmit(): void {
-    if (this.registrationForm.invalid) {
-      this.registrationForm.markAllAsTouched();
+    if (this.isSubmitting()) return;
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.form.controls.categoria.markAsDirty();
+      this.focusFirstInvalid();
       return;
     }
 
-    this.isSubmitting = true;
-    this.submitError = '';
-    this.submitSuccess = false;
+    this.status.set('submitting');
+    this.submitError.set('');
 
-    const formData = { ...this.registrationForm.value };
+    const payload: RegistrationData = this.form.getRawValue();
 
-    this.http.post<any>(this.apiUrl, formData).subscribe({
+    this.api.register(payload).subscribe({
       next: (response) => {
-        this.isSubmitting = false;
         if (response.success) {
-          this.submitSuccess = true;
-          this.registrationCode = response.data?.codigo || '';
-          this.registrationForm.reset();
-        }
-      },
-      error: (error) => {
-        this.isSubmitting = false;
-        if (error.status === 409) {
-          this.submitError = 'Este correo electrónico ya está registrado.';
-        } else if (error.status === 422) {
-          const errors = error.error?.errors || [];
-          this.submitError = errors.map((e: any) => e.mensaje).join('. ');
-        } else if (error.status === 429) {
-          this.submitError = 'Demasiados intentos. Espera 15 minutos.';
+          this.registrationCode.set(response.data?.codigo ?? '');
+          this.status.set('success');
+          this.form.reset();
+          this.focusAfterRender('.registration__success-title');
         } else {
-          this.submitError = 'Error al procesar la inscripción. Intenta de nuevo.';
+          this.fail(response.message || 'No fue posible completar la inscripción.');
         }
       },
+      error: (error: HttpErrorResponse) => this.fail(this.mapHttpError(error)),
     });
   }
 
-  /**
-   * Resetea el estado del formulario para una nueva inscripción.
-   */
   resetForm(): void {
-    this.submitSuccess = false;
-    this.submitError = '';
-    this.registrationCode = '';
-    this.registrationForm.reset();
+    this.status.set('idle');
+    this.submitError.set('');
+    this.registrationCode.set('');
+    this.form.reset();
+    this.focusAfterRender('#nombre');
+  }
+
+  private fail(message: string): void {
+    this.submitError.set(message);
+    this.status.set('error');
+  }
+
+  private mapHttpError(error: HttpErrorResponse): string {
+    switch (error.status) {
+      case 0:
+        return 'No hay conexión con el servidor. Revisa tu internet e intenta de nuevo.';
+      case 409:
+        this.setServerError('correo', 'Este correo electrónico ya está registrado.');
+        return 'Este correo electrónico ya está registrado.';
+      case 422: {
+        const body = error.error as ValidationErrorResponse | null;
+        const errors = body?.errors ?? [];
+        errors.forEach((e) => this.setServerError(e.campo, e.mensaje));
+        this.focusFirstInvalid();
+        return errors.map((e) => e.mensaje).join('. ') || 'Revisa los datos del formulario.';
+      }
+      case 429:
+        return 'Demasiados intentos. Espera 15 minutos e intenta de nuevo.';
+      default:
+        return 'Error al procesar la inscripción. Intenta de nuevo.';
+    }
+  }
+
+  private setServerError(field: string, message: string): void {
+    const control = this.form.get(field);
+    if (!control) return;
+    control.setErrors({ ...(control.errors ?? {}), server: message });
+    control.markAsTouched();
+  }
+
+  private focusFirstInvalid(): void {
+    this.focusAfterRender('[formcontrolname].ng-invalid');
+  }
+
+  private focusAfterRender(selector: string): void {
+    afterNextRender(
+      () => this.host.nativeElement.querySelector<HTMLElement>(selector)?.focus(),
+      { injector: this.injector },
+    );
   }
 }

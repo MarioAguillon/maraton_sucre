@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CategoryCode } from '../../config/event.config';
+import { RegistrationState } from '../../services/registration-state';
 
 interface DistanceCard {
   tag: string;
@@ -7,7 +9,7 @@ interface DistanceCard {
   price: string;
   priceNote: string;
   athleteImg: string;
-  categoryCode: string;
+  categoryCode: CategoryCode;
   isFree?: boolean;
   features: string[];
 }
@@ -19,6 +21,8 @@ interface DistanceCard {
   templateUrl: './categories.html',
 })
 export class Categories {
+  private readonly registrationState = inject(RegistrationState);
+
   distances: DistanceCard[] = [
     {
       tag: 'RESISTENCIA & VELOCIDAD',
@@ -55,15 +59,7 @@ export class Categories {
     },
   ];
 
-  selectDistance(code: string): void {
-    const registrationSection = document.getElementById('inscripcion');
-    if (registrationSection) {
-      registrationSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    const selectElem = document.getElementById('categoria') as HTMLSelectElement | null;
-    if (selectElem) {
-      selectElem.value = code;
-      selectElem.dispatchEvent(new Event('change'));
-    }
+  selectDistance(code: CategoryCode): void {
+    this.registrationState.selectCategory(code);
   }
 }

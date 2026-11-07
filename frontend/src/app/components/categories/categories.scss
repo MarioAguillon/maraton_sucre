@@ -6,7 +6,23 @@
   background-color: $purple-dark;
   background-image: 
     linear-gradient(180deg, rgba($purple-dark, 0.92) 0%, rgba($purple-dark, 0.82) 50%, rgba($purple-dark, 0.96) 100%),
-    url('/assets/images/bg-distancias.jpg');
+    url('/assets/images/bg-distancias-1920.jpg');
+  background-image:
+    linear-gradient(180deg, rgba($purple-dark, 0.92) 0%, rgba($purple-dark, 0.82) 50%, rgba($purple-dark, 0.96) 100%),
+    image-set(
+      url('/assets/images/bg-distancias-1920.avif') type('image/avif'),
+      url('/assets/images/bg-distancias-1920.webp') type('image/webp'),
+      url('/assets/images/bg-distancias-1920.jpg') type('image/jpeg')
+    );
+
+  @include respond-to(md) {
+    background-image:
+      linear-gradient(180deg, rgba($purple-dark, 0.92) 0%, rgba($purple-dark, 0.82) 50%, rgba($purple-dark, 0.96) 100%),
+      image-set(
+        url('/assets/images/bg-distancias-960.avif') type('image/avif'),
+        url('/assets/images/bg-distancias-960.webp') type('image/webp')
+      );
+  }
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
