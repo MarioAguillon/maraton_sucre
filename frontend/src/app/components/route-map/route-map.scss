@@ -207,9 +207,14 @@
     }
   }
 
+  &__card,
+  &__media-card {
+    min-width: 0; // los ítems de grid no deben crecer más que su columna
+  }
+
   &__media-card {
     @include mms-card;
-    padding: 28px;
+    padding: clamp(18px, 4vw, 28px);
   }
 
   &__media-title {
@@ -240,13 +245,17 @@
     object-fit: cover;
   }
 
+  // Ojo: no combinar aspect-ratio con min-height (fuerza un ancho mínimo y desborda en móvil).
   &__map-container {
     border-radius: 16px;
     overflow: hidden;
     aspect-ratio: 16 / 9;
-    min-height: 300px;
     max-height: 520px;
     width: 100%;
+
+    @include respond-to(sm) {
+      aspect-ratio: 1 / 1;
+    }
   }
 
   &__map-frame {

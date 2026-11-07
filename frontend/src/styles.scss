@@ -39,12 +39,14 @@ app-about,
 app-registration,
 app-sponsors,
 app-footer,
+app-course-diagram,
 main,
 section {
   display: block;
   width: 100%;
   max-width: 100%;
 }
+// app-whatsapp-fab NO va aquí: es position:fixed y con width:100% se sale de la pantalla.
 
 .hero,
 .countdown,

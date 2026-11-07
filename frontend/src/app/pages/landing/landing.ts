@@ -15,5 +15,6 @@ import { WhatsappFab } from '../../components/whatsapp-fab/whatsapp-fab';
   selector: 'app-landing',
   imports: [Header, Hero, Countdown, Categories, RouteMap, About, Registration, Sponsors, Footer, WhatsappFab],
   templateUrl: './landing.html',
+  styles: [':host { display: block; width: 100%; }'],
 })
 export class Landing {}
