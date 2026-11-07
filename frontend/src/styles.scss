@@ -10,6 +10,9 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
@@ -17,11 +20,41 @@ body {
   background-color: $purple-dark;
   color: $white;
   line-height: 1.6;
+  width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  // Evita negritas falsas en fuentes de un solo peso (Anton).
   font-synthesis-weight: none;
+}
+
+app-root,
+app-landing,
+app-header,
+app-hero,
+app-countdown,
+app-categories,
+app-route-map,
+app-about,
+app-registration,
+app-sponsors,
+app-footer,
+main,
+section {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.hero,
+.countdown,
+.circuits,
+.about,
+.registration,
+.sponsors,
+.footer {
+  width: 100%;
+  max-width: 100%;
 }
 
 a {
