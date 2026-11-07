@@ -1,13 +1,27 @@
 @use '../../../styles/variables' as *;
+@use 'sass:map';
 @use '../../../styles/mixins' as *;
+
+// Acentos metálicos por nivel (aclarados para contraste AA sobre fondo oscuro)
+$tiers: (
+  gold: #E9C46A,
+  silver: #CBD5E1,
+  allies: #D9A066,
+);
 
 .sponsors {
   padding: $section-padding;
-  background: $purple-dark;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba($purple-accent, 0.12), transparent 70%),
+    $purple-dark;
 
   &__container {
     @include container;
     text-align: center;
+  }
+
+  &__tagline {
+    @include section-subtitle;
   }
 
   &__title {
@@ -16,122 +30,357 @@
 
   &__subtitle {
     color: $gray-subtle;
-    font-size: 1.1rem;
-    margin-top: -30px;
-    margin-bottom: 50px;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1rem);
+    margin-bottom: clamp(36px, 6vw, 56px);
   }
 
+  // ─── Niveles ───────────────────────────────────
   &__tier {
-    margin-bottom: 40px;
+    --tier: #{map.get($tiers, gold)};
+    margin-bottom: clamp(36px, 5vw, 52px);
+
+    @each $id, $color in $tiers {
+      &--#{$id} { --tier: #{$color}; }
+    }
+  }
+
+  &__tier-head {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 3vw, 24px);
+    margin-bottom: 22px;
+  }
+
+  &__tier-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--tier) 55%, transparent));
+
+    &:last-child {
+      transform: scaleX(-1);
+    }
   }
 
   &__tier-name {
     font-family: $font-heading;
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: clamp(0.9rem, 0.85rem + 0.3vw, 1.05rem);
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 20px;
+    letter-spacing: 0.22em;
+    color: var(--tier);
+  }
 
-    &--gold { color: #FFD700; }
-    &--silver { color: #C0C0C0; }
-    &--bronze { color: #CD7F32; }
+  &__tier-tagline {
+    margin-top: 2px;
+    font-size: 0.78rem;
+    color: $gray-subtle;
   }
 
   &__grid {
+    list-style: none;
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-    gap: 20px;
+    justify-content: center;
+    gap: clamp(12px, 2vw, 20px);
+  }
 
-    &--gold {
-      .sponsors__logo-card {
-        width: 200px;
-        height: 120px;
-      }
-    }
+  &__item {
+    flex: 0 1 220px;
+    min-width: 0;
 
-    &--silver {
-      .sponsors__logo-card {
-        width: 160px;
-        height: 100px;
-      }
-    }
+    .sponsors__tier--gold & { flex-basis: 420px; }
+    .sponsors__tier--silver & { flex-basis: 290px; }
 
-    &--bronze {
-      .sponsors__logo-card {
-        width: 130px;
-        height: 80px;
-      }
+    @include respond-to(sm) {
+      .sponsors__tier--gold & { flex-basis: 100%; }
+      .sponsors__tier--silver &,
+      .sponsors__tier--allies & { flex-basis: calc(50% - 8px); }
     }
   }
 
-  &__logo-link {
-    text-decoration: none;
-  }
-
-  &__logo-card {
-    @include glass-card;
-    padding: 16px;
+  // ─── Tarjeta ───────────────────────────────────
+  &__card {
+    position: relative;
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    transition: all $transition-normal;
+    gap: 6px;
+    height: 100%;
+    min-height: 110px;
+    padding: 20px;
+    overflow: hidden;
+    border-radius: 20px;
+    color: $white;
+    text-decoration: none;
+    background: linear-gradient(160deg, rgba($white, 0.07), rgba($white, 0.015) 60%), rgba($purple-card, 0.55);
+    border: 1px solid rgba($white, 0.09);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba($white, 0.06);
+    transition: transform $transition-normal, box-shadow $transition-normal, border-color $transition-normal;
 
-    &--gold {
-      border-color: rgba(#FFD700, 0.2);
-      &:hover { border-color: rgba(#FFD700, 0.5); }
+    .sponsors__tier--gold & { min-height: 170px; }
+    .sponsors__tier--silver & { min-height: 135px; }
+
+    // Borde degradado (aparece en hover)
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      padding: 1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, var(--tier), transparent 45%, transparent 55%, var(--tier));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity $transition-normal;
+      pointer-events: none;
     }
-    &--silver {
-      border-color: rgba(#C0C0C0, 0.2);
-      &:hover { border-color: rgba(#C0C0C0, 0.5); }
+
+    // Destello diagonal
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -50% auto -50% -60%;
+      width: 40%;
+      z-index: -1;
+      background: linear-gradient(90deg, transparent, rgba($white, 0.1), transparent);
+      transform: skewX(-20deg) translateX(0);
+      transition: transform 0.7s ease;
+      pointer-events: none;
     }
-    &--bronze {
-      border-color: rgba(#CD7F32, 0.2);
-      &:hover { border-color: rgba(#CD7F32, 0.5); }
+
+    &:is(a):hover,
+    &:is(a):focus-visible {
+      transform: translateY(-6px);
+      border-color: transparent;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.5),
+        0 0 32px color-mix(in srgb, var(--tier) 22%, transparent);
+
+      &::before { opacity: 1; }
+      &::after { transform: skewX(-20deg) translateX(420%); }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tier);
+      outline-offset: 4px;
+    }
+
+    &--available {
+      background: rgba($white, 0.02);
+      border: 1px dashed color-mix(in srgb, var(--tier) 40%, transparent);
+      box-shadow: none;
     }
   }
 
-  &__logo-img {
-    max-width: 80%;
-    max-height: 50px;
+  &__logo {
+    max-width: 78%;
+    max-height: 64px;
     object-fit: contain;
-    filter: grayscale(100%) brightness(1.5);
-    opacity: 0.7;
-    transition: all $transition-normal;
+    filter: grayscale(1) brightness(1.6);
+    opacity: 0.8;
+    transition: filter $transition-normal, opacity $transition-normal, transform $transition-normal;
 
-    .sponsors__logo-card:hover & {
-      filter: grayscale(0%) brightness(1);
+    .sponsors__tier--gold & { max-height: 88px; }
+
+    .sponsors__card:hover & {
+      filter: none;
       opacity: 1;
+      transform: scale(1.04);
     }
   }
 
-  &__logo-name {
-    font-size: 0.7rem;
-    color: $gray-subtle;
-    font-weight: 500;
+  &__plus {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--tier) 50%, transparent);
+    color: var(--tier);
+    transition: transform $transition-normal, background-color $transition-normal;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    .sponsors__card:hover & {
+      transform: rotate(90deg);
+      background: color-mix(in srgb, var(--tier) 15%, transparent);
+    }
   }
 
-  // CTA
+  &__available-title {
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__available-note {
+    font-size: 0.75rem;
+    color: $gray-subtle;
+  }
+
+  // ─── CTA ───────────────────────────────────────
   &__cta {
-    margin-top: 50px;
-    padding: 30px;
-    background: rgba($white, 0.03);
-    border-radius: 16px;
-    border: 1px dashed rgba($white, 0.15);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin-top: clamp(16px, 4vw, 32px);
+    padding: clamp(28px, 5vw, 48px);
+    border-radius: 28px;
+    text-align: left;
+    background: linear-gradient(135deg, rgba($purple-card, 0.95), rgba(#1A0538, 0.95));
+    border: 1px solid rgba($purple-accent, 0.3);
+    box-shadow: $shadow-card;
+
+    @include respond-to(md) {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+  }
+
+  &__cta-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 90% 20%, rgba($red-cta, 0.25), transparent 45%),
+      radial-gradient(circle at 5% 100%, rgba($blue-accent, 0.15), transparent 45%);
+  }
+
+  &__cta-content,
+  &__cta-button {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__cta-kicker {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    color: $red-cta;
+  }
+
+  &__cta-title {
+    margin: 8px 0 10px;
+    font-family: $font-heading;
+    font-size: clamp(1.35rem, 1rem + 1.5vw, 2rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: $white;
+    text-wrap: balance;
   }
 
   &__cta-text {
-    color: $gray-subtle;
-    font-size: 1.1rem;
-    margin-bottom: 16px;
+    max-width: 52ch;
+    color: $white-dim;
+    font-size: 0.95rem;
+    line-height: 1.6;
+
+    @include respond-to(md) {
+      margin-inline: auto;
+    }
+  }
+
+  &__cta-tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+
+    @include respond-to(md) {
+      justify-content: center;
+    }
+
+    li {
+      padding: 5px 14px;
+      border-radius: 50px;
+      border: 1px solid rgba($white, 0.18);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: $white-dim;
+    }
   }
 
   &__cta-button {
-    @include cta-button($purple-light);
-    font-size: 0.9rem;
-    padding: 12px 30px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 16px 32px;
+    border-radius: 50px;
+    background: $red-cta;
+    color: $white;
+    font-family: $font-heading;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    box-shadow: $shadow-glow-cta;
+    transition: transform $transition-fast, background-color $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      color: $white;
+      background: $red-cta-hover;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba($red-cta, 0.6);
+    }
+
+    &:focus-visible {
+      outline: 3px solid $white;
+      outline-offset: 3px;
+    }
+  }
+
+  &__cta-icon {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  &__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__card,
+    &__card::after,
+    &__logo,
+    &__plus,
+    &__cta-button {
+      transition: none;
+    }
+
+    &__card:is(a):hover,
+    &__card:is(a):focus-visible,
+    &__cta-button:hover {
+      transform: none;
+    }
   }
 }

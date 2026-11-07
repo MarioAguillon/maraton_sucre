@@ -12,6 +12,12 @@ export const CONTACT = {
   location: 'Bolívar — Sucre, Santander - Colombia',
 } as const;
 
+/** WhatsApp de Armando con mensaje predefinido para empresas interesadas en patrocinar. */
+export const SPONSORSHIP_WHATSAPP_URL =
+  `${CONTACT.whatsappUrl}?text=${encodeURIComponent(
+    'Hola Armando, tengo una empresa y quiero información para patrocinar la Maratón Bolívar - Sucre',
+  )}`;
+
 export const SOCIAL = {
   /** TODO: reemplazar por la URL real de la página de Facebook del evento. */
   facebookUrl: '#',

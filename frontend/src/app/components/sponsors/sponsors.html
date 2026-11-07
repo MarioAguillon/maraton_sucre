@@ -1,31 +1,83 @@
-<section class="sponsors" id="patrocinadores">
+<section class="sponsors" id="patrocinadores" aria-labelledby="sponsors-title">
   <div class="sponsors__container">
-    <h2 class="sponsors__title">PATROCINADORES & ALIADOS</h2>
-    <p class="sponsors__subtitle">Gracias a quienes hacen posible este evento</p>
+    <span class="sponsors__tagline">QUIENES LO HACEN POSIBLE</span>
+    <h2 class="sponsors__title" id="sponsors-title">PATROCINADORES &amp; ALIADOS</h2>
+    <p class="sponsors__subtitle">Marcas que corren con nosotros de Bolívar a Sucre</p>
 
-    @for (tier of sponsorTiers; track tier.name) {
-      <div class="sponsors__tier">
-        <h3 class="sponsors__tier-name" [class]="'sponsors__tier-name--' + tier.tier">
-          {{ tier.name }}
-        </h3>
-        <div class="sponsors__grid" [class]="'sponsors__grid--' + tier.tier">
-          @for (sponsor of tier.sponsors; track sponsor.name) {
-            <a [href]="sponsor.url" class="sponsors__logo-link" target="_blank" rel="noopener noreferrer" [attr.aria-label]="sponsor.name">
-              <div class="sponsors__logo-card" [class]="'sponsors__logo-card--' + tier.tier">
-                <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo-img" loading="lazy">
-                <span class="sponsors__logo-name">{{ sponsor.name }}</span>
-              </div>
-            </a>
+    @for (tier of tiers; track tier.id) {
+      <section [class]="'sponsors__tier sponsors__tier--' + tier.id" [attr.aria-labelledby]="'tier-' + tier.id">
+        <header class="sponsors__tier-head">
+          <span class="sponsors__tier-line" aria-hidden="true"></span>
+          <div class="sponsors__tier-text">
+            <h3 class="sponsors__tier-name" [id]="'tier-' + tier.id">{{ tier.name }}</h3>
+            <p class="sponsors__tier-tagline">{{ tier.tagline }}</p>
+          </div>
+          <span class="sponsors__tier-line" aria-hidden="true"></span>
+        </header>
+
+        <ul class="sponsors__grid">
+          @for (card of tier.cards; track $index) {
+            <li class="sponsors__item">
+              @if (card.kind === 'sponsor') {
+                @if (card.sponsor.url) {
+                  <a
+                    class="sponsors__card"
+                    [href]="card.sponsor.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [attr.aria-label]="card.sponsor.name + ' (se abre en una pestaña nueva)'"
+                  >
+                    <img class="sponsors__logo" [src]="card.sponsor.logo" [alt]="card.sponsor.name" loading="lazy" decoding="async">
+                  </a>
+                } @else {
+                  <div class="sponsors__card">
+                    <img class="sponsors__logo" [src]="card.sponsor.logo" [alt]="card.sponsor.name" loading="lazy" decoding="async">
+                  </div>
+                }
+              } @else {
+                <a
+                  class="sponsors__card sponsors__card--available"
+                  [href]="sponsorshipUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'Espacio disponible en ' + tier.name + ': solicitar información por WhatsApp (se abre en una pestaña nueva)'"
+                >
+                  <span class="sponsors__plus" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+                  </span>
+                  <span class="sponsors__available-title">Espacio disponible</span>
+                  <span class="sponsors__available-note">Tu marca aquí</span>
+                </a>
+              }
+            </li>
           }
-        </div>
-      </div>
+        </ul>
+      </section>
     }
 
-    <div class="sponsors__cta">
-      <p class="sponsors__cta-text">¿Quieres ser patrocinador?</p>
-      <a href="mailto:triatlonsucresantander@gmail.com" class="sponsors__cta-button">
-        CONTÁCTANOS
+    <!-- CTA patrocinio -->
+    <aside class="sponsors__cta" aria-labelledby="sponsors-cta-title">
+      <div class="sponsors__cta-glow" aria-hidden="true"></div>
+      <div class="sponsors__cta-content">
+        <span class="sponsors__cta-kicker">PATROCINIO 2027</span>
+        <h3 class="sponsors__cta-title" id="sponsors-cta-title">¿Quieres que tu marca corra con nosotros?</h3>
+        <p class="sponsors__cta-text">
+          Conecta tu empresa con atletas, familias y la comunidad de Bolívar y Sucre.
+          Escríbenos y te enviamos la información de patrocinio.
+        </p>
+        <ul class="sponsors__cta-tags" aria-label="Beneficios">
+          <li>Visibilidad</li>
+          <li>Comunidad</li>
+          <li>Deporte</li>
+        </ul>
+      </div>
+      <a class="sponsors__cta-button" [href]="sponsorshipUrl" target="_blank" rel="noopener noreferrer">
+        <svg class="sponsors__cta-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path [attr.d]="whatsappIcon" />
+        </svg>
+        QUIERO PATROCINAR
+        <span class="sponsors__sr-only"> (WhatsApp, se abre en una pestaña nueva)</span>
       </a>
-    </div>
+    </aside>
   </div>
 </section>

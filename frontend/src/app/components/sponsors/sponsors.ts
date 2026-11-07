@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
+import { SPONSORSHIP_WHATSAPP_URL } from '../../config/contact.config';
+import { SPONSOR_TIERS, Sponsor } from '../../config/sponsors.config';
+import { WHATSAPP_ICON_PATH } from '../../shared/brand-icons';
 
-interface Sponsor {
-  name: string;
-  logo: string;
-  url: string;
-  tier: 'gold' | 'silver' | 'bronze';
-}
+type TierCard = { kind: 'sponsor'; sponsor: Sponsor } | { kind: 'available'; index: number };
 
 @Component({
   imports: [],
@@ -14,33 +12,13 @@ interface Sponsor {
   templateUrl: './sponsors.html',
 })
 export class Sponsors {
-  sponsorTiers = [
-    {
-      name: 'Patrocinadores Oro',
-      tier: 'gold' as const,
-      sponsors: [
-        { name: 'Patrocinador 1', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-        { name: 'Patrocinador 2', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-      ],
-    },
-    {
-      name: 'Patrocinadores Plata',
-      tier: 'silver' as const,
-      sponsors: [
-        { name: 'Patrocinador 3', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-        { name: 'Patrocinador 4', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-        { name: 'Patrocinador 5', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-      ],
-    },
-    {
-      name: 'Aliados',
-      tier: 'bronze' as const,
-      sponsors: [
-        { name: 'Aliado 1', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-        { name: 'Aliado 2', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-        { name: 'Aliado 3', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-        { name: 'Aliado 4', logo: 'assets/sponsors/sponsor-placeholder.png', url: '#' },
-      ],
-    },
-  ];
+  readonly sponsorshipUrl = SPONSORSHIP_WHATSAPP_URL;
+  readonly whatsappIcon = WHATSAPP_ICON_PATH;
+
+  /** Cada nivel con sus patrocinadores reales + huecos disponibles hasta completar `slots`. */
+  readonly tiers = SPONSOR_TIERS.map((tier) => {
+    const cards: TierCard[] = tier.sponsors.map((sponsor) => ({ kind: 'sponsor', sponsor }));
+    for (let i = cards.length; i < tier.slots; i++) cards.push({ kind: 'available', index: i });
+    return { ...tier, cards };
+  });
 }

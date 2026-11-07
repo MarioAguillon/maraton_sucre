@@ -1,5 +1,6 @@
 const supabase = require('../config/supabase');
 const { v4: uuidv4 } = require('uuid');
+const { sendRegistrationConfirmation } = require('../services/email.service');
 
 /**
  * Calcula la categoría por edad basándose en la fecha del evento (9 Ene 2027).
@@ -99,6 +100,11 @@ const crearInscripcion = async (req, res) => {
         message: 'Error al procesar la inscripción. Intenta de nuevo.',
       });
     }
+
+    // Correo de confirmación en segundo plano: no bloquea ni hace fallar la respuesta.
+    sendRegistrationConfirmation(data).catch((mailError) => {
+      console.error(`❌ Error enviando correo a ${data.correo}:`, mailError.message);
+    });
 
     return res.status(201).json({
       success: true,
