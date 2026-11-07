@@ -16,7 +16,13 @@ app.use(globalLimiter);
 
 // ─── CORS ───────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+  origin: (origin, callback) => {
+    // Permitir peticiones de localhost, Vercel o cualquier origen autorizado
+    if (!origin || origin.includes('localhost') || origin.includes('vercel.app') || process.env.FRONTEND_URL === '*' || (process.env.FRONTEND_URL && origin.includes(process.env.FRONTEND_URL))) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

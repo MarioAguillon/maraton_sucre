@@ -15,7 +15,10 @@ export const EVENT_DATE_LABEL = '9 de Enero de 2027';
 export const EVENT_START_TIME_LABEL = '6:45 AM';
 export const EVENT_ROUTE_LABEL = 'Bolívar → Sucre';
 
-export const API_BASE_URL = 'http://localhost:3000/api';
+export const API_BASE_URL =
+  typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:3000/api'
+    : 'https://maraton-sucre-backend.onrender.com/api';
 
 export type RaceType = 'cuarto' | '6k';
 
