@@ -108,7 +108,7 @@ export const COURSES: readonly Course[] = [
     tag: 'RESISTENCIA',
     title: 'CIRCUITO BOLÍVAR - SUCRE',
     description:
-      'Recorrido desafiante y mayormente pavimentado que conecta el municipio de Bolívar con Sucre. Diseñado para corredores que buscan ritmo, resistencia y una experiencia escénica inolvidable entre las montañas y valles de Santander.',
+      'Recorrido desafiante por carretera destapada que conecta el municipio de Bolívar con Sucre. Diseñado para corredores que buscan ritmo, resistencia y una experiencia escénica inolvidable entre las montañas de la provincia de Vélez.',
     start: 'Parque Bolívar',
     finish: 'Parque Sucre',
     markerEveryKm: 2,

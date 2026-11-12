@@ -19,9 +19,13 @@
               <div class="distances__note">{{ item.priceNote }}</div>
             </div>
 
-            <!-- Athlete Visual Graphic -->
+            <!-- Foto real del recorrido -->
             <div class="distances__visual">
-              <img [src]="item.athleteImg" [alt]="'Atleta ' + item.distance" class="distances__athlete-img" loading="lazy">
+              <picture>
+                <source type="image/webp" [attr.srcset]="item.routePhoto + '-600.webp 600w, ' + item.routePhoto + '.webp 1200w'" sizes="(max-width: 576px) 170px, 200px">
+                <img [src]="item.routePhoto + '.jpg'" [alt]="item.routePhotoAlt" class="distances__athlete-img" width="600" height="800" loading="lazy" decoding="async">
+              </picture>
+              <span class="distances__visual-label" aria-hidden="true">{{ item.distance }}</span>
             </div>
           </div>
 
