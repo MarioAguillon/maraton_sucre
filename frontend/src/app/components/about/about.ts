@@ -16,7 +16,7 @@ export class About {
     },
     {
       photo: 'assets/images/pilar-espiritu.webp',
-      alt: 'Atletas en la salida de la carrera',
+      alt: 'Grupo de atletas reunidos en la montaña antes de una carrera',
       title: 'Espíritu Deportivo',
       desc: 'Un desafío atlético de primer nivel tanto para corredores élite como para aficionados y familias que aman el running.',
     },
