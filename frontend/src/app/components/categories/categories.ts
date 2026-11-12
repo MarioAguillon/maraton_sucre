@@ -8,9 +8,9 @@ interface DistanceCard {
   title: string;
   price: string;
   priceNote: string;
-  /** Foto real del recorrido (sin extensión; existen .jpg, .webp y -600.webp). */
-  routePhoto: string;
-  routePhotoAlt: string;
+  /** Foto del atleta (sin extensión; existen .jpg, .webp y -640.webp). */
+  athletePhoto: string;
+  athletePhotoAlt: string;
   categoryCode: CategoryCode;
   isFree?: boolean;
   features: string[];
@@ -32,8 +32,8 @@ export class Categories {
       title: '¼ MARATÓN BOLÍVAR - SUCRE',
       price: '$30.000',
       priceNote: 'PRECIO OFICIAL · CUPOS LIMITADOS',
-      routePhoto: 'assets/images/ruta-10k',
-      routePhotoAlt: 'Carretera destapada del recorrido 10.5K entre Bolívar y Sucre',
+      athletePhoto: 'assets/images/atleta-10k',
+      athletePhotoAlt: 'Atleta con la camiseta oficial corriendo por la carretera destapada del recorrido 10.5K',
       categoryCode: 'elite_18',
       features: [
         'Medalla de finalista conmemorativa',
@@ -47,8 +47,8 @@ export class Categories {
       title: 'LA PEÑA - SUCRE',
       price: 'GRATIS',
       priceNote: 'INSCRIPCIÓN ABIERTA · INCLUYE MEDALLA',
-      routePhoto: 'assets/images/ruta-6k',
-      routePhotoAlt: 'Carretera destapada y montañas en el recorrido 6K La Peña - Sucre',
+      athletePhoto: 'assets/images/atleta-6k',
+      athletePhotoAlt: 'Atleta sonriente con la camiseta oficial corriendo en el recorrido 6K La Peña - Sucre',
       categoryCode: '6k_abierta',
       isFree: true,
       features: [

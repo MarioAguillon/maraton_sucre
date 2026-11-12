@@ -7,26 +7,22 @@
     <div class="distances__grid">
       @for (item of distances; track item.distance) {
         <div class="distances__card" [class.distances__card--free]="item.isFree">
-          <!-- Top Row: Distance + Tag -->
-          <div class="distances__card-header">
-            <div class="distances__info">
-              <span class="distances__pill">{{ item.tag }}</span>
-              <div class="distances__number">{{ item.distance }}</div>
-              <div class="distances__title">{{ item.title }}</div>
-              <div class="distances__price" [class.distances__price--free]="item.isFree">
-                {{ item.price }}
-              </div>
-              <div class="distances__note">{{ item.priceNote }}</div>
-            </div>
+          <!-- Foto del atleta en primer plano, con la distancia superpuesta -->
+          <div class="distances__visual">
+            <picture>
+              <source type="image/webp" [attr.srcset]="item.athletePhoto + '-640.webp 640w, ' + item.athletePhoto + '.webp 1200w'" sizes="(max-width: 992px) 100vw, 600px">
+              <img [src]="item.athletePhoto + '.jpg'" [alt]="item.athletePhotoAlt" class="distances__athlete-img" width="1200" height="1490" loading="lazy" decoding="async">
+            </picture>
+            <span class="distances__pill distances__pill--photo">{{ item.tag }}</span>
+            <div class="distances__number">{{ item.distance }}</div>
+          </div>
 
-            <!-- Foto real del recorrido -->
-            <div class="distances__visual">
-              <picture>
-                <source type="image/webp" [attr.srcset]="item.routePhoto + '-600.webp 600w, ' + item.routePhoto + '.webp 1200w'" sizes="(max-width: 576px) 170px, 200px">
-                <img [src]="item.routePhoto + '.jpg'" [alt]="item.routePhotoAlt" class="distances__athlete-img" width="600" height="800" loading="lazy" decoding="async">
-              </picture>
-              <span class="distances__visual-label" aria-hidden="true">{{ item.distance }}</span>
+          <div class="distances__info">
+            <div class="distances__title">{{ item.title }}</div>
+            <div class="distances__price" [class.distances__price--free]="item.isFree">
+              {{ item.price }}
             </div>
+            <div class="distances__note">{{ item.priceNote }}</div>
           </div>
 
           <!-- Feature items -->
