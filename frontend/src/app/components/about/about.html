@@ -11,9 +11,11 @@
           Unimos en un solo latido a dos municipios hermanos a través de una ruta escénica de 10.5 kilómetros de carretera destapada, montañas y cultura.
         </p>
         <p class="about__desc">
-          Más que una competencia, es un festival del deporte que abre sus puertas el <strong>9 de Enero de 2027</strong> a atletas de todo el país 
-          con cronometraje profesional, una bolsa de premiación de <strong>$3.200.000 COP</strong> y la carrera recreativa <strong>6K La Peña - Sucre</strong> 
-          100% gratuita con medalla para cada finalista.
+          Más que una competencia, es un festival del deporte que abre sus puertas el <strong>9 de Enero de 2027</strong> a atletas de la región y de todo el país,
+          que van a disfrutar la pasión del atletismo en suelo santandereano en el <strong>puente de Reyes</strong> y en las
+          <strong>ferias y fiestas de Sucre, Santander</strong>, con una bolsa de premiación de <strong>$3.200.000 COP</strong>
+          para el pódium de 10.5K masculino y femenino. A su vez, habrá <strong>medalla de participación para todos los atletas</strong>
+          de las tres competencias a realizar, incluida la carrera recreativa <strong>6K La Peña - Sucre</strong>, 100% gratuita.
         </p>
 
         <div class="about__cta-wrapper">
@@ -25,7 +27,9 @@
       <div class="about__grid">
         @for (item of pillars; track item.title) {
           <div class="about__pillar-card">
-            <span class="about__pillar-icon">{{ item.icon }}</span>
+            <div class="about__pillar-photo">
+              <img [src]="item.photo" [alt]="item.alt" width="800" height="600" loading="lazy" decoding="async">
+            </div>
             <h4 class="about__pillar-title">{{ item.title }}</h4>
             <p class="about__pillar-desc">{{ item.desc }}</p>
           </div>
