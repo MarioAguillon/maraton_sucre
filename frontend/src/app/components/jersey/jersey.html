@@ -1,0 +1,39 @@
+<section class="jersey" id="camiseta" aria-labelledby="jersey-title">
+  <div class="jersey__container">
+    <div class="jersey__info">
+      <span class="jersey__pill">EDICIÓN 2027</span>
+      <h2 class="jersey__title" id="jersey-title">
+        <span class="jersey__title-small">Camiseta</span>
+        OFICIAL
+      </h2>
+
+      <div class="jersey__price">PRÓXIMAMENTE</div>
+      <p class="jersey__note">Valor por confirmar · Se vende aparte de la inscripción</p>
+
+      <ul class="jersey__features">
+        @for (feat of features; track feat) {
+          <li class="jersey__feature">
+            <span class="jersey__check" aria-hidden="true">✓</span>
+            <span>{{ feat }}</span>
+          </li>
+        }
+      </ul>
+
+      <a class="jersey__cta" [href]="whatsappUrl" target="_blank" rel="noopener">
+        QUIERO MI CAMISETA
+      </a>
+      <p class="jersey__disclaimer">Imagen de referencia. El diseño final puede variar.</p>
+    </div>
+
+    <div class="jersey__visual">
+      <img
+        src="assets/images/camiseta-oficial.webp"
+        alt="Camiseta oficial blanca de la ¼ Maratón Bolívar - Sucre con el logo en el pecho"
+        width="800"
+        height="966"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+</section>
