@@ -141,11 +141,10 @@ export const COURSES: readonly Course[] = [
       { label: 'Salida → Llegada', value: 'Sector La Peña → Parque Sucre' },
     ],
     categoryCode: '6k_abierta',
-    // Punto aproximado del km 4.5 de la vía Bolívar → Sucre (salida del 6K, sector La Peña).
-    // Se usan coordenadas porque Google Maps confunde "La Peña" con otro lugar fuera de la ruta.
-    // Interpolado entre el centro de Bolívar (5.9911, -73.7739) y el de Sucre (5.9230, -73.7950).
-    // Si se toma la ubicación exacta con GPS, reemplazar aquí.
-    mapsOrigin: '5.9619,-73.7829',
+    // Salida del 6K (sector La Peña) sobre la vía Bolívar → Sucre, marcada manualmente
+    // por la organización en Google Maps. Se usan coordenadas porque Google confunde
+    // "La Peña" con otros lugares fuera de la ruta.
+    mapsOrigin: '5.934646,-73.790666',
     mapsDestination: 'Parque Principal, Sucre, Santander, Colombia',
   },
 ];
