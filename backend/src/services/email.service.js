@@ -233,13 +233,50 @@ function buildConfirmationText({ codigo, nombreCompleto, distance, route, catego
  * @param {{ correo: string, nombre: string, apellidos: string, codigo_inscripcion: string,
  *           categoria: string, tipo_carrera: string }} inscripcion
  */
-async function sendRegistrationConfirmation(inscripcion) {
-  const transport = getTransporter();
-  if (!transport) {
-    console.warn('⚠️  EMAIL_USER/EMAIL_PASS no configurados: se omite el correo de confirmación.');
-    return null;
-  }
+/**
+ * Proveedor de envío. Brevo (API HTTPS) tiene prioridad si BREVO_API_KEY existe:
+ * Render en plan gratuito bloquea los puertos SMTP, así que Gmail por SMTP no sale desde allí.
+ */
+function emailProvider() {
+  if (process.env.BREVO_API_KEY) return 'brevo';
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) return 'gmail-smtp';
+  return null;
+}
 
+/** Envía por la API HTTP de Brevo (https://developers.brevo.com/reference/sendtransacemail). */
+async function sendWithBrevo({ to, subject, html, text }) {
+  const senderEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+  if (!senderEmail) throw new Error('Falta EMAIL_FROM (correo remitente verificado en Brevo).');
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({
+      sender: { name: EVENT.name, email: senderEmail },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      textContent: text,
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`Brevo respondió ${res.status}: ${detail.slice(0, 300)}`);
+  }
+  return res.json();
+}
+
+async function deliver(message) {
+  const provider = emailProvider();
+  if (provider === 'brevo') return sendWithBrevo(message);
+  if (provider === 'gmail-smtp') {
+    return getTransporter().sendMail({ from: `"${EVENT.name}" <${process.env.EMAIL_USER}>`, ...message });
+  }
+  console.warn('⚠️  Correo no configurado (BREVO_API_KEY o EMAIL_USER/EMAIL_PASS): se omite el envío.');
+  return null;
+}
+
+async function sendRegistrationConfirmation(inscripcion) {
   const { distance, route } = raceInfo(inscripcion.tipo_carrera);
   const data = {
     codigo: escapeHtml(inscripcion.codigo_inscripcion),
@@ -249,8 +286,7 @@ async function sendRegistrationConfirmation(inscripcion) {
     categoria: escapeHtml(CATEGORY_LABELS[inscripcion.categoria] || inscripcion.categoria),
   };
 
-  return transport.sendMail({
-    from: `"${EVENT.name}" <${process.env.EMAIL_USER}>`,
+  return deliver({
     to: inscripcion.correo,
     subject: `✅ Inscripción confirmada · Dorsal ${inscripcion.codigo_inscripcion} · ${EVENT.name}`,
     html: buildConfirmationHtml(data),
@@ -262,4 +298,17 @@ async function sendRegistrationConfirmation(inscripcion) {
   });
 }
 
-module.exports = { sendRegistrationConfirmation, buildConfirmationHtml };
+/** Correo corto para comprobar desde el panel que el envío funciona en producción. */
+async function sendTestEmail(to) {
+  const provider = emailProvider();
+  if (!provider) throw new Error('No hay proveedor de correo configurado en el servidor.');
+  await deliver({
+    to,
+    subject: `Prueba de correo · ${EVENT.name}`,
+    html: `<p>Este es un correo de prueba enviado desde el panel del organizador de la <strong>${EVENT.name}</strong>.</p><p>Si lo recibiste, los correos de confirmación están funcionando.</p>`,
+    text: `Correo de prueba del panel del organizador de la ${EVENT.name}. Si lo recibiste, los correos de confirmación funcionan.`,
+  });
+  return provider;
+}
+
+module.exports = { sendRegistrationConfirmation, sendTestEmail, emailProvider, buildConfirmationHtml };

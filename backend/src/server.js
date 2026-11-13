@@ -67,6 +67,8 @@ app.listen(PORT, () => {
   console.log(`\n🏃 ¼ Maratón Bolívar - Sucre API`);
   console.log(`📡 Servidor corriendo en: http://localhost:${PORT}`);
   console.log(`🌐 CORS habilitado para: ${process.env.FRONTEND_URL || 'http://localhost:4200'}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health\n`);
+  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  const { emailProvider } = require('./services/email.service');
+  console.log(`✉️  Correo: ${emailProvider() || 'SIN CONFIGURAR'}\n`);
 });
 

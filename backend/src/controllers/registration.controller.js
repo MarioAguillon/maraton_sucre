@@ -1,37 +1,7 @@
 const supabase = require('../config/supabase');
 const { v4: uuidv4 } = require('uuid');
 const { sendRegistrationConfirmation } = require('../services/email.service');
-
-/**
- * Calcula la categoría por edad basándose en la fecha del evento (9 Ene 2027).
- */
-function calcularEdadAlEvento(fechaNacimiento) {
-  const birthDate = new Date(fechaNacimiento);
-  const eventDate = new Date('2027-01-09');
-  let age = eventDate.getFullYear() - birthDate.getFullYear();
-  const monthDiff = eventDate.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && eventDate.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
-}
-
-/**
- * Genera un código de inscripción único.
- * Formato: MBS-XXXX-XXXX (Maratón Bolívar Sucre)
- */
-function generarCodigoInscripcion() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'MBS-';
-  for (let i = 0; i < 4; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  code += '-';
-  for (let i = 0; i < 4; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
+const { edadAlEvento, generarCodigoInscripcion } = require('../utils/inscripcion');
 
 /**
  * POST /api/inscripciones
@@ -64,7 +34,7 @@ const crearInscripcion = async (req, res) => {
       });
     }
 
-    const edad = calcularEdadAlEvento(fecha_nacimiento);
+    const edad = edadAlEvento(fecha_nacimiento);
     const codigoInscripcion = generarCodigoInscripcion();
 
     // Determinar tipo de carrera

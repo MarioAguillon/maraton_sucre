@@ -2,15 +2,26 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { API_BASE_URL } from '../config/event.config';
-import { ApiResponse, Athlete, AthleteUpdate } from './admin.models';
+import { ApiResponse, Athlete, AthleteCreate, AthleteUpdate } from './admin.models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminApi {
   private readonly http = inject(HttpClient);
   private readonly base = `${API_BASE_URL}/admin/inscripciones`;
 
+  /** Envía un correo de prueba; devuelve el mensaje del servidor. */
+  testEmail(correo: string): Observable<string> {
+    return this.http
+      .post<ApiResponse<unknown>>(`${API_BASE_URL}/admin/correo-prueba`, { correo })
+      .pipe(map((r) => r.message ?? 'Correo de prueba enviado.'));
+  }
+
   list(): Observable<Athlete[]> {
     return this.http.get<ApiResponse<Athlete[]>>(this.base).pipe(map((r) => r.data));
+  }
+
+  create(data: AthleteCreate): Observable<Athlete> {
+    return this.http.post<ApiResponse<Athlete>>(this.base, data).pipe(map((r) => r.data));
   }
 
   update(id: string, changes: AthleteUpdate): Observable<Athlete> {
