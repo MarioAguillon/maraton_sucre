@@ -30,6 +30,12 @@ export type AthleteUpdate = Partial<
   >
 >;
 
+/** Datos para una inscripción manual desde el panel. */
+export type AthleteCreate = Required<Omit<AthleteUpdate, 'cedula'>> & {
+  cedula: string | null;
+  enviar_correo: boolean;
+};
+
 export interface ApiResponse<T> {
   success: boolean;
   message?: string;

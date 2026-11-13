@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 const { body, param } = require('express-validator');
 const { validate } = require('../middlewares/validator');
 const { requireAdmin } = require('../middlewares/adminAuth');
-const { login, listar, actualizar, eliminar } = require('../controllers/admin.controller');
+const { login, listar, crear, actualizar, eliminar, correoPrueba } = require('../controllers/admin.controller');
 
 const router = express.Router();
 
@@ -36,6 +36,14 @@ const updateRules = [
   body('estado').optional().isIn(['pendiente', 'confirmado', 'cancelado']).withMessage('Estado inválido'),
 ];
 
+/** Al crear, los campos obligatorios del formulario público deben venir. */
+const REQUIRED_ON_CREATE = ['nombre', 'apellidos', 'fecha_nacimiento', 'correo', 'celular', 'ciudad_municipio', 'genero', 'categoria'];
+const createRules = [
+  ...REQUIRED_ON_CREATE.map((field) => body(field).exists({ values: 'falsy' }).withMessage(`El campo ${field} es obligatorio`)),
+  ...updateRules.slice(1),
+  body('enviar_correo').optional().isBoolean().withMessage('enviar_correo debe ser true o false').toBoolean(),
+];
+
 router.post(
   '/login',
   loginLimiter,
@@ -47,7 +55,15 @@ router.post(
 
 router.use('/inscripciones', requireAdmin);
 router.get('/inscripciones', listar);
+router.post('/inscripciones', createRules, validate, crear);
 router.put('/inscripciones/:id', updateRules, validate, actualizar);
 router.delete('/inscripciones/:id', idRule, validate, eliminar);
+router.post(
+  '/correo-prueba',
+  requireAdmin,
+  body('correo').trim().isEmail().withMessage('Correo inválido'),
+  validate,
+  correoPrueba,
+);
 
 module.exports = router;

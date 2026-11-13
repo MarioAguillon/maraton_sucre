@@ -45,6 +45,7 @@ export class AdminDashboard {
   readonly sortDir = signal<'asc' | 'desc'>('desc');
   readonly exporting = signal(false);
   readonly notice = signal<string | null>(null);
+  readonly testingEmail = signal(false);
 
   // ─── Métricas ────────────────────────────────────
   readonly totals = computed(() => {
@@ -82,7 +83,10 @@ export class AdminDashboard {
   private readonly editDialog = viewChild.required<ElementRef<HTMLDialogElement>>('editDialog');
   private readonly deleteDialog = viewChild.required<ElementRef<HTMLDialogElement>>('deleteDialog');
 
+  /** Atleta en edición; `null` con `formOpen` activo significa "agregar nuevo". */
   readonly editing = signal<Athlete | null>(null);
+  readonly formOpen = signal(false);
+  readonly sendEmail = signal(true);
   readonly deleting = signal<Athlete | null>(null);
   readonly saving = signal(false);
   readonly dialogError = signal<string | null>(null);
@@ -156,9 +160,42 @@ export class AdminDashboard {
     }
   }
 
+  // ─── Correo de prueba ────────────────────────────
+  sendTestEmail(): void {
+    const correo = window.prompt('¿A qué correo enviamos la prueba?', this.lastTestEmail)?.trim();
+    if (!correo) return;
+    this.lastTestEmail = correo;
+    this.testingEmail.set(true);
+    this.api.testEmail(correo).subscribe({
+      next: (message) => {
+        this.testingEmail.set(false);
+        this.flash(`${message} Revisa la bandeja (y la carpeta de spam).`, 8000);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.testingEmail.set(false);
+        this.flash(this.errorMessage(err, 'No se pudo enviar el correo de prueba.'), 12000);
+      },
+    });
+  }
+  private lastTestEmail = '';
+
+  // ─── Agregar ─────────────────────────────────────
+  openCreate(): void {
+    this.editing.set(null);
+    this.formOpen.set(true);
+    this.sendEmail.set(true);
+    this.dialogError.set(null);
+    this.editForm.reset({
+      nombre: '', apellidos: '', cedula: '', fecha_nacimiento: '', correo: '', celular: '',
+      ciudad_municipio: '', genero: 'masculino', categoria: 'elite_18', estado: 'pendiente',
+    });
+    this.editDialog().nativeElement.showModal();
+  }
+
   // ─── Editar ──────────────────────────────────────
   openEdit(athlete: Athlete): void {
     this.editing.set(athlete);
+    this.formOpen.set(true);
     this.dialogError.set(null);
     this.editForm.reset({
       nombre: athlete.nombre,
@@ -177,7 +214,6 @@ export class AdminDashboard {
 
   saveEdit(): void {
     const athlete = this.editing();
-    if (!athlete) return;
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
       this.dialogError.set('Revisa los campos marcados.');
@@ -189,6 +225,23 @@ export class AdminDashboard {
 
     this.saving.set(true);
     this.dialogError.set(null);
+
+    if (!athlete) {
+      this.api.create({ ...value, cedula: changes.cedula ?? null, enviar_correo: this.sendEmail() }).subscribe({
+        next: (created) => {
+          this.athletes.update((list) => [created, ...list]);
+          this.saving.set(false);
+          this.editDialog().nativeElement.close();
+          this.flash(`${created.nombre} ${created.apellidos} inscrito con el código ${created.codigo_inscripcion}.`);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.saving.set(false);
+          this.dialogError.set(this.errorMessage(err, 'No se pudo crear la inscripción.'));
+        },
+      });
+      return;
+    }
+
     this.api.update(athlete.id, changes).subscribe({
       next: (updated) => {
         this.athletes.update((list) => list.map((a) => (a.id === updated.id ? updated : a)));
@@ -234,6 +287,7 @@ export class AdminDashboard {
 
   onDialogClosed(): void {
     this.editing.set(null);
+    this.formOpen.set(false);
     this.deleting.set(null);
     this.dialogError.set(null);
   }
@@ -249,9 +303,9 @@ export class AdminDashboard {
   }
 
   private noticeTimer?: ReturnType<typeof setTimeout>;
-  private flash(message: string): void {
+  private flash(message: string, ms = 4000): void {
     clearTimeout(this.noticeTimer);
     this.notice.set(message);
-    this.noticeTimer = setTimeout(() => this.notice.set(null), 4000);
+    this.noticeTimer = setTimeout(() => this.notice.set(null), ms);
   }
 }
