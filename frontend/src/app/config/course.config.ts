@@ -144,7 +144,7 @@ export const COURSES: readonly Course[] = [
     // Salida del 6K (sector La Peña) sobre la vía Bolívar → Sucre, marcada manualmente
     // por la organización en Google Maps. Se usan coordenadas porque Google confunde
     // "La Peña" con otros lugares fuera de la ruta.
-    mapsOrigin: '5.934646,-73.790666',
+    mapsOrigin: '5.961127,-73.779548',
     mapsDestination: 'Parque Principal, Sucre, Santander, Colombia',
   },
 ];
