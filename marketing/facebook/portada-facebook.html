@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portada Facebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@700;800&display=swap">
+<style>
+  :root { --bg:#16042E; --panel:#1A0538; --txt:#fff; --muted:#C9A2FF; --accent:#FF0B53; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.5 Montserrat, system-ui, sans-serif; padding:16px; }
+  h1 { font-family:Anton, sans-serif; font-weight:400; letter-spacing:.5px; margin:0 0 4px; font-size:28px; }
+  p.lead { color:var(--muted); margin:0 0 16px; }
+  .wrap { max-width:1100px; margin:0 auto; }
+  canvas { width:100%; height:auto; display:block; border-radius:8px; box-shadow:0 10px 40px #0008; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:16px; }
+  fieldset { border:1px solid #ffffff22; background:var(--panel); border-radius:10px; padding:12px 14px; margin:0; }
+  legend { font-weight:800; padding:0 6px; }
+  label { display:block; font-size:13px; color:var(--muted); margin:8px 0 2px; }
+  input[type=text] { width:100%; padding:8px; border-radius:6px; border:1px solid #ffffff33; background:#0006; color:#fff; font:inherit; }
+  input[type=range] { width:100%; }
+  input[type=file] { color:#fff; max-width:100%; }
+  .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:16px; }
+  button { background:var(--accent); color:#fff; border:0; padding:12px 20px; border-radius:999px; font:800 15px Montserrat, sans-serif; cursor:pointer; transition:transform .15s, filter .15s; }
+  button:hover { transform:translateY(-1px); filter:brightness(1.1); }
+  button.sec { background:#ffffff1a; }
+  .chk { display:flex; gap:6px; align-items:center; color:#fff; font-size:14px; margin:0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Portada de Facebook · Bolívar | Sucre</h1>
+  <p class="lead">Sube una foto de la iglesia de cada pueblo, acomódalas y descarga la portada (1640 × 624 px). La línea punteada marca lo que se ve en celular: deja el texto dentro.</p>
+
+  <canvas id="c" width="1640" height="624"></canvas>
+
+  <div class="row">
+    <button id="dl">⬇ Descargar portada PNG</button>
+    <label class="chk"><input type="checkbox" id="guides" checked> Mostrar guías (no salen en la descarga)</label>
+    <label class="chk"><input type="checkbox" id="diag" checked> Corte en diagonal</label>
+  </div>
+
+  <div class="grid">
+    <fieldset>
+      <legend>Izquierda</legend>
+      <input type="file" accept="image/*" data-side="L">
+      <label>Nombre bajo la foto</label><input type="text" id="nameL" value="BOLÍVAR">
+      <label>Zoom</label><input type="range" min="1" max="3" step="0.01" value="1" data-side="L" data-k="zoom">
+      <label>Mover horizontal</label><input type="range" min="-1" max="1" step="0.01" value="0" data-side="L" data-k="x">
+      <label>Mover vertical</label><input type="range" min="-1" max="1" step="0.01" value="0" data-side="L" data-k="y">
+    </fieldset>
+    <fieldset>
+      <legend>Derecha</legend>
+      <input type="file" accept="image/*" data-side="R">
+      <label>Nombre bajo la foto</label><input type="text" id="nameR" value="SUCRE">
+      <label>Zoom</label><input type="range" min="1" max="3" step="0.01" value="1" data-side="R" data-k="zoom">
+      <label>Mover horizontal</label><input type="range" min="-1" max="1" step="0.01" value="0" data-side="R" data-k="x">
+      <label>Mover vertical</label><input type="range" min="-1" max="1" step="0.01" value="0" data-side="R" data-k="y">
+    </fieldset>
+    <fieldset>
+      <legend>Textos</legend>
+      <label>Título</label><input type="text" id="t1" value="¼ MARATÓN BOLÍVAR - SUCRE">
+      <label>Subtítulo</label><input type="text" id="t2" value="9 DE ENERO 2027 · 10.5K · 6K GRATIS">
+      <label>Web</label><input type="text" id="t3" value="INSCRÍBETE: MARATON-BOLIVAR-SUCRE.VERCEL.APP">
+      <label>Oscurecido</label><input type="range" id="dark" min="0" max="0.85" step="0.01" value="0.45">
+    </fieldset>
+  </div>
+</div>
+
+<script>
+const W = 1640, H = 624;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const S = { L:{img:null,zoom:1,x:0,y:0}, R:{img:null,zoom:1,x:0,y:0} };
+const $ = id => document.getElementById(id);
+// Zona visible en celular (Facebook recorta los lados): ~640x360 → ancho ≈ H*640/360
+const MOB_W = Math.round(H * 640 / 360);
+
+document.querySelectorAll('input[type=file]').forEach(inp => inp.addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const img = new Image();
+  img.onload = () => { S[inp.dataset.side].img = img; draw(); };
+  img.src = URL.createObjectURL(f);
+}));
+document.querySelectorAll('input[data-k]').forEach(r => r.addEventListener('input', () => {
+  S[r.dataset.side][r.dataset.k] = parseFloat(r.value); draw();
+}));
+document.querySelectorAll('input[type=text], #dark, #guides, #diag').forEach(i => i.addEventListener('input', () => draw()));
+
+// Polígono de cada mitad
+function half(side) {
+  const off = $('diag').checked ? 90 : 0;  // inclinación del corte
+  const top = W/2 + off, bot = W/2 - off;
+  ctx.beginPath();
+  if (side === 'L') { ctx.moveTo(0,0); ctx.lineTo(top,0); ctx.lineTo(bot,H); ctx.lineTo(0,H); }
+  else { ctx.moveTo(top,0); ctx.lineTo(W,0); ctx.lineTo(W,H); ctx.lineTo(bot,H); }
+  ctx.closePath();
+}
+
+function drawPhoto(side) {
+  const s = S[side];
+  ctx.save(); half(side); ctx.clip();
+  // Área de la mitad (un poco más ancha para cubrir la diagonal)
+  const ax = side === 'L' ? 0 : W/2 - 100, aw = W/2 + 100;
+  if (!s.img) {
+    const g = ctx.createLinearGradient(ax,0,ax+aw,H);
+    g.addColorStop(0, side==='L' ? '#3a0d6e' : '#1A0538'); g.addColorStop(1, side==='L' ? '#1A0538' : '#5a0d3a');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = '#ffffff55'; ctx.font = '700 30px Montserrat'; ctx.textAlign = 'center';
+    ctx.fillText('Sube la foto de ' + (side==='L' ? $('nameL').value : $('nameR').value), ax + aw/2, H - 140);
+  } else {
+    const sc = Math.max(aw / s.img.width, H / s.img.height) * s.zoom;
+    const iw = s.img.width * sc, ih = s.img.height * sc;
+    const dx = ax + (aw - iw)/2 + s.x * (iw - aw)/2;
+    const dy = (H - ih)/2 + s.y * (ih - H)/2;
+    ctx.drawImage(s.img, dx, dy, iw, ih);
+  }
+  ctx.restore();
+}
+
+function draw(forExport = false) {
+  ctx.clearRect(0,0,W,H);
+  drawPhoto('L'); drawPhoto('R');
+
+  // Oscurecido general + viñeta central para legibilidad
+  const d = parseFloat($('dark').value);
+  ctx.fillStyle = `rgba(22,4,46,${d})`; ctx.fillRect(0,0,W,H);
+  const rg = ctx.createRadialGradient(W/2,H/2,50,W/2,H/2,W*0.45);
+  rg.addColorStop(0, `rgba(22,4,46,${Math.min(d+0.25,0.9)})`); rg.addColorStop(1,'rgba(22,4,46,0)');
+  ctx.fillStyle = rg; ctx.fillRect(0,0,W,H);
+  const bg = ctx.createLinearGradient(0,H*0.55,0,H);
+  bg.addColorStop(0,'rgba(0,0,0,0)'); bg.addColorStop(1,'rgba(0,0,0,.55)');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+  // Línea divisoria
+  const off = $('diag').checked ? 90 : 0;
+  ctx.strokeStyle = '#FF0B53'; ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.moveTo(W/2+off,0); ctx.lineTo(W/2-off,H); ctx.stroke();
+
+  // Nombres de pueblo (abajo, dentro de la zona móvil)
+  ctx.fillStyle = '#fff'; ctx.font = '400 44px Anton'; ctx.shadowColor = '#000a'; ctx.shadowBlur = 12;
+  const mL = (W - MOB_W)/2 + 40, mR = (W + MOB_W)/2 - 40;
+  ctx.textAlign = 'left';  ctx.fillText($('nameL').value, mL, H - 40);
+  ctx.textAlign = 'right'; ctx.fillText($('nameR').value, mR, H - 40);
+
+  // Textos centrales
+  ctx.textAlign = 'center';
+  fitText($('t1').value, '400 {s}px Anton', 92, MOB_W - 120, W/2, 250, '#fff');
+  ctx.shadowBlur = 8;
+  fitText($('t2').value, '800 {s}px Montserrat', 38, MOB_W - 160, W/2, 320, '#fff');
+  // Píldora de la web
+  const t3 = $('t3').value;
+  ctx.font = '800 30px Montserrat'; ctx.shadowBlur = 0;
+  const tw = ctx.measureText(t3).width + 60;
+  ctx.fillStyle = '#FF0B53'; roundRect(W/2 - tw/2, 352, tw, 56, 28); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.fillText(t3, W/2, 391);
+  ctx.shadowBlur = 0;
+
+  if (!forExport && $('guides').checked) {
+    ctx.setLineDash([12,10]); ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3;
+    ctx.strokeRect((W - MOB_W)/2, 2, MOB_W, H - 4);
+    ctx.setLineDash([]); ctx.fillStyle = '#38bdf8'; ctx.font = '700 20px Montserrat'; ctx.textAlign = 'left';
+    ctx.fillText('Zona visible en celular', (W - MOB_W)/2 + 10, 28);
+  }
+}
+
+function fitText(t, fontTpl, size, maxW, x, y, color) {
+  let s = size;
+  do { ctx.font = fontTpl.replace('{s}', s); s -= 2; } while (ctx.measureText(t).width > maxW && s > 12);
+  ctx.fillStyle = color; ctx.fillText(t, x, y);
+}
+function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+$('dl').addEventListener('click', () => {
+  draw(true);
+  const a = document.createElement('a');
+  a.download = 'portada-facebook-bolivar-sucre.png';
+  a.href = cv.toDataURL('image/png');
+  a.click();
+  draw();
+});
+
+Promise.all([document.fonts.load('400 92px Anton'), document.fonts.load('800 38px Montserrat')])
+  .catch(() => {}).finally(draw);
+draw();
+</script>
+</body>
+</html>
