@@ -19,8 +19,7 @@ export const SPONSORSHIP_WHATSAPP_URL =
   )}`;
 
 export const SOCIAL = {
-  /** TODO: reemplazar por la URL real de la página de Facebook del evento. */
-  facebookUrl: '#',
+  facebookUrl: 'https://www.facebook.com/maratonbolivarsucre/',
   whatsappUrl: CONTACT.whatsappUrl,
 } as const;
 
