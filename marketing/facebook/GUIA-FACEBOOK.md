@@ -1,6 +1,6 @@
 # Guía para configurar la página de Facebook · ¼ Maratón Bolívar - Sucre
 
-> Por ahora la web es `https://maraton-bolivar-sucre.vercel.app`. Cuando compres el dominio, reemplaza esa dirección en todo el archivo.
+> La web oficial es `https://maratonbolivarsucre.com`.
 
 ---
 
@@ -40,11 +40,11 @@ Entra a la página → **Configuración** / **Editar detalles de la página**.
    ```
    🏃 9 de enero 2027 · 10.5K y 6K gratis · $3.200.000 en premios 🏅 Inscríbete 👇
    ```
-5. **Sitio web:** `https://maraton-bolivar-sucre.vercel.app` (mientras compras el dominio, pon la URL actual de Vercel y luego la cambias).
+5. **Sitio web:** `https://maratonbolivarsucre.com`.
 6. **WhatsApp:** en *Configuración → Cuentas vinculadas → WhatsApp* conecta el número **310 219 8939**. Esto activa el botón de WhatsApp.
 7. **Correo:** `triatlonsucresantander@gmail.com`
 8. **Ubicación / área de servicio:** Bolívar y Sucre, Santander, Colombia.
-9. **Botón de acción** (el azul debajo de la portada): **"Registrarte"** → enlace `https://maraton-bolivar-sucre.vercel.app/#inscripcion`.
+9. **Botón de acción** (el azul debajo de la portada): **"Registrarte"** → enlace `https://maratonbolivarsucre.com/#inscripcion`.
    - Alternativa: "Enviar mensaje de WhatsApp".
 10. **Descripción larga** (sección *Información / Detalles*):
 
@@ -60,7 +60,7 @@ La ¼ Maratón Bolívar - Sucre nace de la pasión por el atletismo y el orgullo
 
 Más que una competencia: un festival del deporte para atletas élite, aficionados y familias.
 
-👉 Inscríbete en: https://maraton-bolivar-sucre.vercel.app
+👉 Inscríbete en: https://maratonbolivarsucre.com
 📲 WhatsApp: 310 219 8939
 ```
 
@@ -73,7 +73,7 @@ Más que una competencia: un festival del deporte para atletas élite, aficionad
 
 - **Pon el link al final de cada publicación** (Facebook no lo agrega solo). Usa siempre la misma "firma":
   ```
-  👉 Inscríbete: https://maraton-bolivar-sucre.vercel.app
+  👉 Inscríbete: https://maratonbolivarsucre.com
   📲 WhatsApp: 310 219 8939
   ```
   Guárdala en el celular (notas o teclado) para pegarla rápido.
@@ -100,7 +100,7 @@ Más que una competencia: un festival del deporte para atletas élite, aficionad
 
 Dos pueblos, una sola meta. ¿Te le mides? 💪
 
-👉 Inscríbete: https://maraton-bolivar-sucre.vercel.app
+👉 Inscríbete: https://maratonbolivarsucre.com
 📲 WhatsApp: 310 219 8939
 
 #MaratónBolívarSucre #CorreSantander #Running
@@ -114,7 +114,7 @@ Dos pueblos, una sola meta. ¿Te le mides? 💪
 Salimos del Parque de Bolívar y llegamos a Sucre: 10.5 km entre montañas, paisaje campesino y la calidez de la provincia de Vélez. 🌄
 
 ¿Ya lo conoces? Míralo completo en la web 👇
-👉 https://maraton-bolivar-sucre.vercel.app
+👉 https://maratonbolivarsucre.com
 📲 WhatsApp: 310 219 8939
 
 #MaratónBolívarSucre
@@ -128,7 +128,7 @@ Salimos del Parque de Bolívar y llegamos a Sucre: 10.5 km entre montañas, pais
 La Carrera Recreativa La Peña – Sucre es para todos: familias, amigos y quienes quieren vivir su primera carrera.
 
 Cupos limitados, inscríbete ya 👇
-👉 https://maraton-bolivar-sucre.vercel.app/#inscripcion
+👉 https://maratonbolivarsucre.com/#inscripcion
 📲 WhatsApp: 310 219 8939
 ```
 
@@ -139,7 +139,7 @@ Cupos limitados, inscríbete ya 👇
 La ¼ Maratón Bolívar - Sucre premia a los mejores del podio. ¿Serás tú? 🥇🥈🥉
 
 Consulta categorías y premios 👇
-👉 https://maraton-bolivar-sucre.vercel.app
+👉 https://maratonbolivarsucre.com
 ```
 
 ### 5 · Camiseta / kit
@@ -148,7 +148,7 @@ Consulta categorías y premios 👇
 
 Así vas a correr el 9 de enero. ¿Te gusta? Déjanos tu comentario 👇
 
-👉 Inscríbete: https://maraton-bolivar-sucre.vercel.app
+👉 Inscríbete: https://maratonbolivarsucre.com
 ```
 📷 Imagen: `camiseta-oficial` de la web.
 
@@ -159,7 +159,7 @@ Así vas a correr el 9 de enero. ¿Te gusta? Déjanos tu comentario 👇
 Esta carrera es de nuestra gente: impulsa el turismo, la economía campesina y a nuestra juventud. 💚
 
 Etiqueta a alguien de Bolívar o Sucre que tiene que correrla 👇
-👉 https://maraton-bolivar-sucre.vercel.app
+👉 https://maratonbolivarsucre.com
 ```
 📷 Imagen: fotos de las dos iglesias.
 
@@ -170,7 +170,7 @@ Etiqueta a alguien de Bolívar o Sucre que tiene que correrla 👇
 A 8 semanas de la carrera: suma 3 salidas por semana y una más larga el fin de semana. Hidrátate bien y descansa. 🏃‍♀️
 
 ¿Ya estás entrenando? Cuéntanos 👇
-👉 Inscríbete: https://maraton-bolivar-sucre.vercel.app
+👉 Inscríbete: https://maratonbolivarsucre.com
 ```
 
 ### 8 · Cuenta regresiva (últimos 15 días)
@@ -179,7 +179,7 @@ A 8 semanas de la carrera: suma 3 salidas por semana y una más larga el fin de 
 
 La ¼ Maratón Bolívar - Sucre está a la vuelta de la esquina. Últimos cupos 🔥
 
-👉 https://maraton-bolivar-sucre.vercel.app
+👉 https://maratonbolivarsucre.com
 📲 WhatsApp: 310 219 8939
 ```
 
@@ -189,7 +189,7 @@ La ¼ Maratón Bolívar - Sucre está a la vuelta de la esquina. Últimos cupos 
 
 Se cierran las inscripciones para la 10.5K. ¡No te quedes por fuera!
 
-👉 https://maraton-bolivar-sucre.vercel.app/#inscripcion
+👉 https://maratonbolivarsucre.com/#inscripcion
 ```
 
 ### 10 · Después de la carrera
@@ -197,7 +197,7 @@ Se cierran las inscripciones para la 10.5K. ¡No te quedes por fuera!
 🙌 ¡GRACIAS, BOLÍVAR Y SUCRE! 🙌
 
 Fuiste parte de la historia. Busca tus fotos y resultados aquí 👇
-👉 https://maraton-bolivar-sucre.vercel.app
+👉 https://maratonbolivarsucre.com
 
 ¡Nos vemos en 2028! 🏃‍♂️
 ```
