@@ -340,9 +340,12 @@
     text-align: center;
   }
 
-  &__submit {
+  &__submit,
+  &__success-btn {
     @include mms-button;
+  }
 
+  &__submit {
     &:focus-visible {
       outline: 3px solid $blue-accent;
       outline-offset: 3px;
@@ -419,7 +422,7 @@
   }
 
   &__success-btn {
-    @include cta-button($blue-accent);
+    width: auto;
     font-size: 0.9rem;
     padding: 12px 30px;
   }

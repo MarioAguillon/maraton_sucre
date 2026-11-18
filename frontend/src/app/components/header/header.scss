@@ -123,27 +123,10 @@
   }
 
   &__cta-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 24px;
-    background: $red-cta;
-    color: $white;
-    font-family: $font-heading;
-    font-size: 0.85rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    border-radius: 50px;
-    text-decoration: none;
-    box-shadow: $shadow-glow-cta;
-    transition: all $transition-fast;
-
-    &:hover {
-      background: $red-cta-hover;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(255, 11, 83, 0.6);
-    }
+    @include race-button(primary, false);
+    min-height: 42px;
+    padding: 10px 22px;
+    font-size: 0.8rem;
 
     @include respond-to(sm) {
       display: none;

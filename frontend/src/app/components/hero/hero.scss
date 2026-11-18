@@ -160,55 +160,12 @@
   }
 
   &__cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 52px;
-    padding: 16px 36px;
-    font-family: $font-heading;
-    font-size: clamp(0.88rem, 0.82rem + 0.25vw, 1rem);
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast, color $transition-fast, border-color $transition-fast;
-    cursor: pointer;
-
-    &:focus-visible {
-      outline: 3px solid $white;
-      outline-offset: 3px;
-    }
-
     &--primary {
-      background: $red-cta;
-      color: $white;
-      box-shadow: $shadow-glow-cta;
-
-      &:hover {
-        color: $white;
-        background: $red-cta-hover;
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba($red-cta, 0.6);
-      }
+      @include race-button(primary);
     }
 
     &--secondary {
-      background: rgba($white, 0.08);
-      color: $white;
-      border: 1px solid rgba($white, 0.35);
-      backdrop-filter: blur(10px);
-
-      &:hover {
-        border-color: $blue-accent;
-        color: $blue-accent;
-        background: rgba($blue-accent, 0.1);
-        transform: translateY(-3px);
-      }
-    }
-
-    &:active {
-      transform: translateY(0);
+      @include race-button(ghost, false);
     }
   }
 

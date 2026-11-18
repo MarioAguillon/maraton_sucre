@@ -1,39 +1,104 @@
 <section class="jersey" id="camiseta" aria-labelledby="jersey-title">
   <div class="jersey__container">
-    <div class="jersey__info">
-      <span class="jersey__pill">EDICIÓN 2027</span>
+    <header class="jersey__header">
+      <span class="jersey__pill">EDICIÓN 2027 · COLECCIÓN OFICIAL</span>
       <h2 class="jersey__title" id="jersey-title">
         <span class="jersey__title-small">Camiseta</span>
         OFICIAL
       </h2>
+      <p class="jersey__lead">
+        Tres cortes, un mismo espíritu. Elige la tuya y corre con los colores de la ¼ Maratón Bolívar - Sucre.
+      </p>
+    </header>
 
-      <div class="jersey__price">PRÓXIMAMENTE</div>
-      <p class="jersey__note">Valor por confirmar · Se vende aparte de la inscripción</p>
+    <ul class="jersey__grid" aria-label="Modelos de camiseta oficial">
+      @for (m of models; track m.id) {
+        <li class="kit">
+          <article class="kit__card" [attr.aria-labelledby]="'kit-' + m.id">
+            <div class="kit__stage">
+              <span class="kit__index" aria-hidden="true">{{ m.index }}</span>
+              <span class="kit__tag">{{ m.tag }}</span>
 
-      <ul class="jersey__features">
-        @for (feat of features; track feat) {
-          <li class="jersey__feature">
-            <span class="jersey__check" aria-hidden="true">✓</span>
-            <span>{{ feat }}</span>
-          </li>
-        }
-      </ul>
+              <button
+                type="button"
+                class="kit__media"
+                (click)="flip(m.id)"
+                [attr.aria-label]="
+                  'Girar camiseta ' + m.name + ' ' + m.highlight + ': ver ' + (view(m.id) === 'front' ? 'espalda' : 'frente')
+                "
+              >
+                <img
+                  class="kit__img"
+                  [class.is-active]="view(m.id) === 'front'"
+                  [src]="m.front"
+                  [alt]="'Camiseta oficial ' + m.name + ' ' + m.highlight + ', vista de frente'"
+                  width="800"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="kit__img"
+                  [class.is-active]="view(m.id) === 'back'"
+                  [src]="m.back"
+                  [alt]="'Camiseta oficial ' + m.name + ' ' + m.highlight + ', vista de espalda'"
+                  width="800"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </button>
 
-      <a class="jersey__cta" [href]="whatsappUrl" target="_blank" rel="noopener">
-        QUIERO MI CAMISETA
-      </a>
-      <p class="jersey__disclaimer">Imagen de referencia. El diseño final puede variar.</p>
-    </div>
+              <div class="kit__toggle" role="group" [attr.aria-label]="'Vista de la camiseta ' + m.highlight">
+                <span class="kit__toggle-thumb" [class.is-back]="view(m.id) === 'back'" aria-hidden="true"></span>
+                <button
+                  type="button"
+                  class="kit__toggle-btn"
+                  [attr.aria-pressed]="view(m.id) === 'front'"
+                  (click)="setView(m.id, 'front')"
+                >
+                  Frente
+                </button>
+                <button
+                  type="button"
+                  class="kit__toggle-btn"
+                  [attr.aria-pressed]="view(m.id) === 'back'"
+                  (click)="setView(m.id, 'back')"
+                >
+                  Espalda
+                </button>
+              </div>
+            </div>
 
-    <div class="jersey__visual">
-      <img
-        src="assets/images/camiseta-oficial.webp"
-        alt="Camiseta oficial blanca de la ¼ Maratón Bolívar - Sucre con el logo en el pecho"
-        width="800"
-        height="1029"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
+            <div class="kit__body">
+              <h3 class="kit__name" [id]="'kit-' + m.id">
+                {{ m.name }} <span class="kit__name-strong">{{ m.highlight }}</span>
+              </h3>
+              <p class="kit__desc">{{ m.description }}</p>
+
+              <div class="kit__footer">
+                <p class="kit__price">
+                  <span class="kit__currency">$</span>{{ m.price }}
+                  <span class="kit__code">COP</span>
+                </p>
+                <a class="kit__cta" [href]="m.whatsappUrl" target="_blank" rel="noopener">
+                  PEDIR LA MÍA
+                  <span class="kit__sr-only"> — {{ m.name }} {{ m.highlight }} (WhatsApp, se abre en una pestaña nueva)</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        </li>
+      }
+    </ul>
+
+    <p class="jersey__swipe" aria-hidden="true">Desliza para ver los 3 modelos →</p>
+
+    <ul class="jersey__perks">
+      <li><span class="jersey__perk-dot" aria-hidden="true"></span>Diseño oficial edición 2027</li>
+      <li><span class="jersey__perk-dot" aria-hidden="true"></span>Se adquiere aparte de la inscripción</li>
+      <li><span class="jersey__perk-dot" aria-hidden="true"></span>Pedidos directos por WhatsApp</li>
+    </ul>
+    <p class="jersey__disclaimer">Imágenes de referencia del diseño oficial. El nombre en la espalda es solo un ejemplo.</p>
   </div>
 </section>

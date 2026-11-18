@@ -321,35 +321,8 @@ $tiers: (
   }
 
   &__cta-button {
+    @include race-button(primary, false);
     flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-height: 54px;
-    padding: 16px 32px;
-    border-radius: 50px;
-    background: $red-cta;
-    color: $white;
-    font-family: $font-heading;
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    box-shadow: $shadow-glow-cta;
-    transition: transform $transition-fast, background-color $transition-fast, box-shadow $transition-fast;
-
-    &:hover {
-      color: $white;
-      background: $red-cta-hover;
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba($red-cta, 0.6);
-    }
-
-    &:focus-visible {
-      outline: 3px solid $white;
-      outline-offset: 3px;
-    }
   }
 
   &__cta-icon {
