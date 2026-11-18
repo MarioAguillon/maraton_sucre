@@ -18,7 +18,7 @@ interface JerseyModel {
 
 const whatsappFor = (model: string): string =>
   `${CONTACT.whatsappUrl}?text=${encodeURIComponent(
-    `Hola, quiero pedir la camiseta oficial ${model} de la ¼ Maratón Bolívar - Sucre`,
+    `Hola, quiero pedir la camiseta oficial ${model} de la ¼ Maratón Bolívar - Sucre. Talla: ___ · Nombre para la espalda: ___`,
   )}`;
 
 /** Colección de camisetas oficiales (se venden aparte de la inscripción). */
